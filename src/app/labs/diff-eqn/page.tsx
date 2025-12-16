@@ -299,13 +299,17 @@ export default function PhasePlanePage() {
     }, [paramI, mousePos, mode]);
 
     const handleMouseMove = (e: React.MouseEvent) => {
-        const rect = canvasRef.current?.getBoundingClientRect();
-        if (rect) {
-            setMousePos({
-                x: e.clientX - rect.left,
-                y: e.clientY - rect.top
-            });
-        }
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+
+        setMousePos({
+            x: (e.clientX - rect.left) * scaleX,
+            y: (e.clientY - rect.top) * scaleY
+        });
     };
 
     const getLabels = (m: Mode) => {
@@ -505,12 +509,13 @@ export default function PhasePlanePage() {
                     <div className="col-span-8 lg:col-span-9 flex flex-col bg-zinc-950 relative overflow-hidden items-center justify-center">
 
                         {/* Canvas */}
-                        <div className="relative border border-zinc-800 rounded bg-zinc-925 shadow-2xl">
+                        {/* Canvas */}
+                        <div className="relative border border-zinc-800 rounded bg-zinc-925 shadow-2xl max-w-full max-h-full" style={{ aspectRatio: '1000/750' }}>
                             <canvas
                                 ref={canvasRef}
                                 width={1000}
                                 height={750}
-                                className="block cursor-crosshair"
+                                className="w-full h-full cursor-crosshair"
                                 onMouseMove={handleMouseMove}
                                 onMouseLeave={() => setMousePos(null)}
                             />
