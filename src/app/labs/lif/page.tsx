@@ -115,7 +115,7 @@ export default function LifLab() {
                     <div className="flex items-center gap-3">
                         <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
                         <h1 className="text-lg font-bold tracking-tight text-white">
-                            <Link href="/" className="hover:text-emerald-400 transition-colors">ISCN</Link> <span className="text-zinc-400 font-normal text-base">| L.I.F. Model</span>
+                            <Link href="/" className="hover:text-emerald-400 transition-colors">ISCN</Link> <span className="text-zinc-400 font-normal text-base">| LIF Synthesis</span>
                         </h1>
                     </div>
                     <ConceptDialog {...lifContent} />

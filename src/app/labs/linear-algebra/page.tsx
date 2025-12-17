@@ -70,7 +70,7 @@ export default function LinearAlgebraPage() {
                     <div className="flex items-center gap-3">
                         <div className={cn("w-2 h-2 rounded-full animate-pulse", mode === 'neuro' ? "bg-purple-500" : "bg-emerald-500")} />
                         <h1 className="text-lg font-bold tracking-tight text-white">
-                            <Link href="/" className="hover:text-emerald-400 transition-colors">ISCN</Link> <span className="text-zinc-400 font-normal text-base">| Linear Algebra</span>
+                            <Link href="/" className="hover:text-emerald-400 transition-colors">ISCN</Link> <span className="text-zinc-400 font-normal text-base">| Signal Integration</span>
                         </h1>
                     </div>
 

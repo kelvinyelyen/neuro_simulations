@@ -332,7 +332,7 @@ export default function PhasePlanePage() {
                     <div className="flex items-center gap-3">
                         <div className={cn("w-2 h-2 rounded-full animate-pulse", `bg-${labels.color}-500`)} />
                         <h1 className="text-lg font-bold tracking-tight text-white">
-                            <Link href="/" className="hover:text-emerald-400 transition-colors">ISCN</Link> <span className="text-zinc-400 font-normal text-base">| {labels.header}</span>
+                            <Link href="/" className="hover:text-emerald-400 transition-colors">ISCN</Link> <span className="text-zinc-400 font-normal text-base">| Membrane Dynamics</span>
                         </h1>
                     </div>
 
