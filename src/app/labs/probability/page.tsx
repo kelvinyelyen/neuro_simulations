@@ -360,44 +360,46 @@ export default function ProbabilityPage() {
                     </div>
                 </header>
 
-                {/* Main Content */}
-                <main className="flex-1 flex flex-col items-center justify-center p-6 relative overflow-hidden">
-                    <canvas
-                        ref={canvasRef}
-                        width={800}
-                        height={400}
-                        className="rounded-lg shadow-2xl border border-zinc-800 bg-zinc-900/80 mb-8 w-full max-w-4xl"
-                    />
+                {/* Main Content - Scrollable Wrapper */}
+                <main className="flex-1 overflow-y-auto bg-zinc-950 relative scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
+                    <div className="min-h-full flex flex-col items-center justify-center p-6 pb-20">
+                        <canvas
+                            ref={canvasRef}
+                            width={800}
+                            height={400}
+                            className="rounded-lg shadow-2xl border border-zinc-800 bg-zinc-900/80 mb-8 w-full max-w-4xl shrink-0"
+                        />
 
-                    <div className="w-full max-w-md space-y-6 bg-zinc-900/80 p-6 rounded-xl border border-white/10 backdrop-blur-sm">
-                        <div className="space-y-4">
-                            <div className="flex justify-between items-center">
-                                <label className="text-sm font-medium text-emerald-400">
-                                    {labels.param}
-                                </label>
-                                <span className="font-mono text-xs bg-zinc-950 px-2 py-1 rounded text-emerald-300">
-                                    {rate.toFixed(2)}
-                                </span>
+                        <div className="w-full max-w-md space-y-6 bg-zinc-900/80 p-6 rounded-xl border border-white/10 backdrop-blur-sm shrink-0">
+                            <div className="space-y-4">
+                                <div className="flex justify-between items-center">
+                                    <label className="text-sm font-medium text-emerald-400">
+                                        {labels.param}
+                                    </label>
+                                    <span className="font-mono text-xs bg-zinc-950 px-2 py-1 rounded text-emerald-300">
+                                        {rate.toFixed(2)}
+                                    </span>
+                                </div>
+                                <Slider
+                                    value={[rate]}
+                                    min={0.01}
+                                    max={0.99}
+                                    step={0.01}
+                                    onValueChange={([v]) => setRate(v)}
+                                    className="py-2"
+                                />
+                                <p className="text-xs text-zinc-500 italic text-center">
+                                    {labels.desc}
+                                </p>
                             </div>
-                            <Slider
-                                value={[rate]}
-                                min={0.01}
-                                max={0.99}
-                                step={0.01}
-                                onValueChange={([v]) => setRate(v)}
-                                className="py-2"
-                            />
-                            <p className="text-xs text-zinc-500 italic text-center">
-                                {labels.desc}
-                            </p>
-                        </div>
 
-                        <div className="pt-4 border-t border-zinc-800">
-                            <div className="flex justify-between items-center text-sm">
-                                <span className="text-zinc-400">Live Stats:</span>
-                                <span className="font-mono text-white">
-                                    {labels.live()}
-                                </span>
+                            <div className="pt-4 border-t border-zinc-800">
+                                <div className="flex justify-between items-center text-sm">
+                                    <span className="text-zinc-400">Live Stats:</span>
+                                    <span className="font-mono text-white">
+                                        {labels.live()}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
