@@ -157,12 +157,12 @@ export default function LinearAlgebraPage() {
                         <div className="flex-1 w-full flex flex-col items-center justify-center p-8 overflow-y-auto">
 
                             {/* THE TANKS */}
-                            <div className="flex items-end justify-center w-full gap-4 md:gap-8 lg:gap-12 mb-8 md:mb-12 lg:mb-16 transform scale-100">
+                            <div className="flex items-end justify-center w-full gap-4 md:gap-8 xl:gap-12 mb-8 md:mb-12 xl:mb-16 transform scale-100">
                                 {/* Inputs */}
                                 <div className="flex gap-8 items-end">
                                     {inputs.map((inVal, i) => (
                                         <div key={i} className="flex flex-col items-center gap-4">
-                                            <div className="w-16 md:w-20 bg-zinc-900/50 rounded-lg overflow-hidden relative border border-zinc-800 h-48 md:h-64 lg:h-80 shadow-2xl">
+                                            <div className="w-16 md:w-20 bg-zinc-900/50 rounded-lg overflow-hidden relative border border-zinc-800 h-48 md:h-60 xl:h-80 shadow-2xl">
                                                 {/* Grid lines */}
                                                 {[0.25, 0.5, 0.75].map((tick) => (
                                                     <div key={tick} className="absolute w-full h-px bg-zinc-800/50" style={{ bottom: `${tick * 100}%` }} />
@@ -187,7 +187,7 @@ export default function LinearAlgebraPage() {
                                 </div>
 
                                 {/* Operator / Arrow */}
-                                <div className="h-48 md:h-64 lg:h-80 flex flex-col justify-center pb-12">
+                                <div className="h-48 md:h-60 xl:h-80 flex flex-col justify-center pb-12">
                                     <div className="text-zinc-700 text-6xl font-thin opacity-50">
                                         &rarr;
                                     </div>
@@ -195,7 +195,7 @@ export default function LinearAlgebraPage() {
 
                                 {/* The SUMMATION TANK */}
                                 <div className="flex flex-col items-center gap-4">
-                                    <div className="w-24 md:w-32 h-48 md:h-64 lg:h-80 bg-zinc-900/50 rounded-lg border-2 border-zinc-700 relative overflow-hidden shadow-2xl">
+                                    <div className="w-24 md:w-32 h-48 md:h-60 xl:h-80 bg-zinc-900/50 rounded-lg border-2 border-zinc-700 relative overflow-hidden shadow-2xl">
                                         {/* Grid lines */}
                                         {[0.25, 0.5, 0.75].map((tick) => (
                                             <div key={tick} className="absolute w-full h-px bg-zinc-800" style={{ bottom: `${tick * 100}%` }} />
@@ -227,8 +227,8 @@ export default function LinearAlgebraPage() {
                             </div>
 
                             {/* ACTIVE FORMULA DISPLAY (Read-Only) */}
-                            <div className="w-full max-w-5xl bg-zinc-900/30 border border-zinc-800 rounded-xl p-4 md:p-8 backdrop-blur-sm">
-                                <div className="flex flex-wrap items-center justify-center gap-y-4 gap-x-2 font-mono text-sm md:text-lg lg:text-xl">
+                            <div className="w-full max-w-5xl bg-zinc-900/30 border border-zinc-800 rounded-xl p-4 md:p-6 xl:p-8 backdrop-blur-sm">
+                                <div className="flex flex-wrap items-center justify-center gap-y-4 gap-x-2 font-mono text-sm md:text-base xl:text-xl">
 
                                     <span className="text-zinc-500 italic mr-4">y =</span>
 

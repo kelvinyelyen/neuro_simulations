@@ -506,16 +506,24 @@ export default function PhasePlanePage() {
                     </div>
 
                     {/* RIGHT COLUMN: Visuals */}
-                    <div className="col-span-8 lg:col-span-9 flex flex-col bg-zinc-950 relative overflow-hidden items-center justify-center">
+                    <div className="col-span-8 lg:col-span-9 bg-zinc-950 relative overflow-hidden h-full w-full flex flex-col items-center justify-center p-4">
 
-                        {/* Canvas */}
-                        {/* Canvas */}
-                        <div className="relative border border-zinc-800 rounded bg-zinc-925 shadow-2xl max-w-full max-h-full" style={{ aspectRatio: '1000/750' }}>
+                        {/* Canvas Container - Flex Centered with explicit Aspect Ratio constraints */}
+                        <div
+                            className="relative border border-zinc-800 rounded bg-zinc-925 shadow-2xl"
+                            style={{
+                                aspectRatio: '1000/750',
+                                width: 'auto',
+                                height: 'auto',
+                                maxWidth: '100%',
+                                maxHeight: '100%'
+                            }}
+                        >
                             <canvas
                                 ref={canvasRef}
                                 width={1000}
                                 height={750}
-                                className="w-full h-full cursor-crosshair"
+                                className="w-full h-full cursor-crosshair block"
                                 onMouseMove={handleMouseMove}
                                 onMouseLeave={() => setMousePos(null)}
                             />
