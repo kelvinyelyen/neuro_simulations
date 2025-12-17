@@ -12,23 +12,23 @@ export default function Home() {
 
       <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-to-br before:from-transparent before:to-emerald-700 before:opacity-10 before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-to-t after:from-emerald-900 after:via-emerald-900 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-emerald-700 before:dark:opacity-10 after:dark:from-emerald-900 after:dark:via-[#0141ff] after:dark:opacity-40 z-[-1]">
         <h1 className="text-6xl font-black tracking-tighter text-emerald-400 mb-8 z-10">
-          ISCN :: EXPLORER
+          ISCN :: CURRICULUM
         </h1>
       </div>
 
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left gap-4">
+      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-3 lg:text-left gap-6">
 
         {/* 1. Linear Algebra */}
         <Link
           href="/labs/linear-algebra"
           className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-emerald-500/30 hover:bg-zinc-900/50 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
         >
-          <h2 className={`mb-3 text-2xl font-semibold flex items-center gap-2`}>
-            Linear A.
+          <h2 className={`mb-3 text-xl font-bold flex items-center gap-2`}>
+            Structure of a Neuron
             <Grid className="h-4 w-4 text-emerald-400" />
           </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Visualizing vectors, dot products, and linear combinations.
+          <p className={`m-0 max-w-[30ch] text-sm text-zinc-400`}>
+            <strong>Synaptic Integration</strong> & Linear Combination. The mathematics of inputs.
           </p>
           <div className="mt-4 flex items-center text-emerald-400 opacity-0 transition-opacity group-hover:opacity-100 text-xs">
             Enter Lab <ArrowRight className="ml-2 h-3 w-3" />
@@ -40,12 +40,12 @@ export default function Home() {
           href="/labs/diff-eqn"
           className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-emerald-500/30 hover:bg-zinc-900/50 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
         >
-          <h2 className={`mb-3 text-2xl font-semibold flex items-center gap-2`}>
-            Phase Plane
+          <h2 className={`mb-3 text-xl font-bold flex items-center gap-2`}>
+            Dynamics of a Neuron
             <Zap className="h-4 w-4 text-emerald-400" />
           </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Analysis of 2D dynamical systems and nullclines.
+          <p className={`m-0 max-w-[30ch] text-sm text-zinc-400`}>
+            Dynamics: Leak &rarr; Resonator &rarr; Spike. The foundation of behavior.
           </p>
           <div className="mt-4 flex items-center text-emerald-400 opacity-0 transition-opacity group-hover:opacity-100 text-xs">
             Enter Lab <ArrowRight className="ml-2 h-3 w-3" />
@@ -57,11 +57,11 @@ export default function Home() {
           href="/labs/lif"
           className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-emerald-500/30 hover:bg-zinc-900/50 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
         >
-          <h2 className={`mb-3 text-2xl font-semibold flex items-center gap-2`}>
+          <h2 className={`mb-3 text-xl font-bold flex items-center gap-2`}>
             LIF Model
             <Activity className="h-4 w-4 text-emerald-400" />
           </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
+          <p className={`m-0 max-w-[30ch] text-sm text-zinc-400`}>
             Single neuron simulation with integrate-and-fire dynamics.
           </p>
           <div className="mt-4 flex items-center text-emerald-400 opacity-0 transition-opacity group-hover:opacity-100 text-xs">

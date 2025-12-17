@@ -1,123 +1,38 @@
 import React from 'react';
 import { InlineMath, BlockMath } from 'react-katex';
 
-type Mode = 'math' | 'eco' | 'neuro' | 'exp' | 'harmonic' | 'logistic';
+type Mode = 'math' | 'leak' | 'resonator' | 'spike';
 
 export const getPhaseContent = (mode: Mode) => {
     switch (mode) {
-        case 'eco':
+        case 'leak':
             return {
-                title: "Predator-Prey Dynamics",
-                subtitle: "Lotka-Volterra Model",
+                title: "Linear Leak",
+                subtitle: "The Passive Membrane",
                 sections: [
                     {
-                        title: "The Story",
-                        color: "amber",
-                        content: (
-                            <div className="space-y-2 text-sm text-zinc-300">
-                                <p>This system models the cycle of life between two species:</p>
-                                <ul className="list-disc list-inside ml-2 space-y-1">
-                                    <li><strong className="text-emerald-400">Prey (<InlineMath>x</InlineMath>):</strong> Rabbits. They grow exponentially in the absence of predators.</li>
-                                    <li><strong className="text-amber-400">Predators (<InlineMath>y</InlineMath>):</strong> Foxes. They starve without prey.</li>
-                                </ul>
-                            </div>
-                        )
-                    },
-                    {
-                        title: "The Equations",
-                        color: "blue",
-                        content: (
-                            <div className="text-sm text-zinc-300">
-                                <BlockMath>
-                                    {"\\begin{cases} \\dot{x} = \\alpha x - \\beta xy \\\\ \\dot{y} = \\delta xy - \\gamma y \\end{cases}"}
-                                </BlockMath>
-                                <p className="mt-2">
-                                    The term <InlineMath>{"xy"}</InlineMath> represents <strong>encounters</strong>. More encounters = fewer rabbits, more foxes.
-                                </p>
-                            </div>
-                        )
-                    },
-                    {
-                        title: "Key Features",
-                        color: "emerald",
-                        content: (
-                            <div className="space-y-2 text-sm text-zinc-300">
-                                <p><strong>Fixed Point (Center):</strong> The ecosystem can exist in a perfect stable balance.</p>
-                                <p><strong>Limit Cycles:</strong> Usually, populations oscillate. A boom in rabbits leads to a boom in foxes, which crashes the rabbits, which crashes the foxes, and the cycle repeats.</p>
-                            </div>
-                        )
-                    }
-                ]
-            };
-
-        case 'neuro':
-            return {
-                title: "Neuroscience: Excitability",
-                subtitle: "FitzHugh-Nagumo Model",
-                sections: [
-                    {
-                        title: "The Story",
-                        color: "emerald",
-                        content: (
-                            <div className="space-y-2 text-sm text-zinc-300">
-                                <p>How does a neuron spike? It&apos;s a battle between two forces:</p>
-                                <ul className="list-disc list-inside ml-2 space-y-1">
-                                    <li><strong className="text-emerald-400">Excitation (<InlineMath>V</InlineMath>):</strong> Sodium channels opening. Fast positive feedback.</li>
-                                    <li><strong className="text-amber-400">Recovery (<InlineMath>w</InlineMath>):</strong> Potassium channels / Leaking. Slow negative feedback.</li>
-                                </ul>
-                            </div>
-                        )
-                    },
-                    {
-                        title: "The Threshold",
-                        color: "rose",
-                        content: (
-                            <div className="text-sm text-zinc-300">
-                                <p>
-                                    The <strong>Nullclines</strong> define the &quot;tipping point&quot;.
-                                </p>
-                                <p className="mt-2">
-                                    If you inject enough Current (<InlineMath>I</InlineMath>), you push the state past the threshold. The system must then take a long &quot;excursion&quot; (a spike) before returning to rest. This is an <strong>Action Potential</strong>.
-                                </p>
-                            </div>
-                        )
-                    }
-                ]
-            };
-
-        case 'exp':
-            return {
-                title: "Linear Dynamics",
-                subtitle: "Exponential Growth & Decay",
-                sections: [
-                    {
-                        title: "Building Blocks",
+                        title: "The RC Circuit",
                         color: "purple",
                         content: (
                             <div className="space-y-2 text-sm text-zinc-300">
-                                <p>Complex systems are built from these simple linear parts:</p>
-                                <div className="grid grid-cols-2 gap-4 mt-2">
-                                    <div className="bg-zinc-900/50 p-2 rounded border border-zinc-800">
-                                        <strong className="text-emerald-400 block mb-1">Growth</strong>
-                                        <InlineMath>{"\\dot{x} = x"}</InlineMath>
-                                        <p className="text-xs text-zinc-500 mt-1">Explodes to infinity.</p>
-                                    </div>
-                                    <div className="bg-zinc-900/50 p-2 rounded border border-zinc-800">
-                                        <strong className="text-rose-400 block mb-1">Decay</strong>
-                                        <InlineMath>{"\\dot{y} = -y"}</InlineMath>
-                                        <p className="text-xs text-zinc-500 mt-1">Dies to zero.</p>
-                                    </div>
-                                </div>
+                                <p>
+                                    The simplest model of a neuron is just a leaky capacitor.
+                                </p>
+                                <ul className="list-disc list-inside ml-2 space-y-1">
+                                    <li><strong className="text-emerald-400">Voltage (<InlineMath>V</InlineMath>):</strong> Uses energy to push ions across the membrane.</li>
+                                    <li><strong className="text-amber-400">Leak (<InlineMath>g_L</InlineMath>):</strong> Ions escape through channels, pulling Voltage back to rest (0).</li>
+                                </ul>
                             </div>
                         )
                     },
                     {
-                        title: "Saddle Point",
+                        title: "Exponential Decay",
                         color: "blue",
                         content: (
                             <div className="text-sm text-zinc-300">
+                                <BlockMath>{"\\dot{V} = -V + I_{ext}"}</BlockMath>
                                 <p>
-                                    When you mix growth in one direction and decay in another, you get a <strong>Saddle</strong>. The Fixed Point is unstable—most paths curve away from it.
+                                    Without input (<InlineMath>I=0</InlineMath>), the system decays exponentially to zero. This is the &quot;forgetting&quot; mechanism of the brain.
                                 </p>
                             </div>
                         )
@@ -125,35 +40,35 @@ export const getPhaseContent = (mode: Mode) => {
                 ]
             };
 
-        case 'harmonic':
+        case 'resonator':
             return {
-                title: "Harmonic Oscillator",
-                subtitle: "Springs & Pendulums",
+                title: "The Resonator",
+                subtitle: "Subthreshold Oscillations",
                 sections: [
                     {
-                        title: "Energy Conservation",
+                        title: "Two Forces",
                         color: "cyan",
                         content: (
                             <div className="space-y-2 text-sm text-zinc-300">
                                 <p>
-                                    Energy sloshes back and forth between <strong>Potential</strong> (Position <InlineMath>x</InlineMath>) and <strong>Kinetic</strong> (Velocity <InlineMath>v</InlineMath>).
+                                    Some neurons don&apos;t just decay; they bounce. This happens when you have two competing currents.
                                 </p>
-                                <BlockMath>{"\\dot{x} = v"}</BlockMath>
-                                <BlockMath>{"\\dot{v} = -k x"}</BlockMath>
+                                <ul className="list-disc list-inside ml-2 space-y-1">
+                                    <li><strong className="text-blue-400">Restoring Force:</strong> Pushes voltage back to rest.</li>
+                                    <li><strong className="text-amber-400">Slow Negative Feedback:</strong> A delayed current (like <InlineMath>I_h</InlineMath>) that overshoots.</li>
+                                </ul>
                             </div>
                         )
                     },
                     {
-                        title: "Damping (Friction)",
+                        title: " damped Oscillations",
                         color: "amber",
                         content: (
                             <div className="text-sm text-zinc-300">
+                                <BlockMath>{"\\dot{V} = w"}</BlockMath>
+                                <BlockMath>{"\\dot{w} = -V - \\delta w"}</BlockMath>
                                 <p>
-                                    In the real world, friction (<InlineMath>{"\\delta"}</InlineMath>) steals energy.
-                                </p>
-                                <BlockMath>{"\\dot{v} = -x - \\delta v"}</BlockMath>
-                                <p>
-                                    This causes the perfect circles to spiral inwards. The system loses energy until it stops at the center (<InlineMath>0,0</InlineMath>).
+                                    This creates a &quot;preferred frequency&quot; at which the neuron likes to vibrate (Resonance).
                                 </p>
                             </div>
                         )
@@ -161,22 +76,35 @@ export const getPhaseContent = (mode: Mode) => {
                 ]
             };
 
-        case 'logistic':
+        case 'spike':
             return {
-                title: "Logistic Growth",
-                subtitle: "Resource Limits",
+                title: "The Spike",
+                subtitle: "FitzHugh-Nagumo Model",
                 sections: [
                     {
-                        title: "Carrying Capacity",
-                        color: "rose",
+                        title: "Excitability",
+                        color: "emerald",
                         content: (
                             <div className="space-y-2 text-sm text-zinc-300">
+                                <p>The defining feature of a neuron: <strong>The Action Potential</strong>.</p>
+                                <p>It requires positive feedback to explode away from rest.</p>
+                                <ul className="list-disc list-inside ml-2 space-y-1">
+                                    <li><strong className="text-emerald-400">Fast Na+ (<InlineMath>V</InlineMath>):</strong> Explodes open when voltage rises.</li>
+                                    <li><strong className="text-amber-400">Slow K+ (<InlineMath>w</InlineMath>):</strong> Slowly opens to shut the system down (refractory period).</li>
+                                </ul>
+                            </div>
+                        )
+                    },
+                    {
+                        title: "Limit Cycles",
+                        color: "rose",
+                        content: (
+                            <div className="text-sm text-zinc-300">
                                 <p>
-                                    Nothing grows forever. Resources (food, space) run out.
+                                    If input <InlineMath>I</InlineMath> is high enough, the Fixed Point becomes unstable.
                                 </p>
-                                <BlockMath>{"\\dot{x} = r x (1 - \\frac{x}{K})"}</BlockMath>
-                                <p>
-                                    When <InlineMath>x</InlineMath> is small, it grows like an exponential. When it hits <InlineMath>K</InlineMath> (Capacity), <InlineMath>(1 - x/K)</InlineMath> becomes zero, so growth stops.
+                                <p className="mt-2">
+                                    The system enters a <strong>Limit Cycle</strong>—repetitive firing. This is how neurons encode strong signals.
                                 </p>
                             </div>
                         )
@@ -190,31 +118,31 @@ export const getPhaseContent = (mode: Mode) => {
                 subtitle: "A Map of All Possibilities",
                 sections: [
                     {
-                        title: "What am I looking at?",
+                        title: "Geometric Thinking",
                         color: "blue",
                         content: (
                             <div className="text-sm text-zinc-300">
                                 <p>
-                                    This isn&apos;t a graph of <InlineMath>x</InlineMath> vs time. It&apos;s a map where every point is a <strong>possible state</strong> of the system.
+                                    Instead of simulating time (<InlineMath>t</InlineMath>), we look at Geometry.
                                 </p>
                                 <p className="mt-2">
-                                    The arrows form a <strong>Vector Field</strong>. They tell you: &quot;If you are here, this is where you go next.&quot;
+                                    Every point on this screen is a possible state of the neuron. The arrows tell you where that state will move next.
                                 </p>
                             </div>
                         )
                     },
                     {
-                        title: "The Nullclines (Skeleton)",
+                        title: "Nullclines",
                         color: "orange",
                         content: (
                             <div className="space-y-2 text-sm text-zinc-300">
                                 <div className="p-2 border border-emerald-500/30 rounded bg-emerald-500/10">
-                                    <strong className="text-emerald-400">Green Line (<InlineMath>dx/dt=0</InlineMath>)</strong>
-                                    <p>Horizontal flow only. <InlineMath>x</InlineMath> stops changing here.</p>
+                                    <strong className="text-emerald-400">Green Line (<InlineMath>{"\\dot{V}=0"}</InlineMath>)</strong>
+                                    <p>Where Voltage stops changing. (The Balance of Currents)</p>
                                 </div>
                                 <div className="p-2 border border-amber-500/30 rounded bg-amber-500/10">
-                                    <strong className="text-amber-400">Orange Line (<InlineMath>dy/dt=0</InlineMath>)</strong>
-                                    <p>Vertical flow only. <InlineMath>y</InlineMath> stops changing here.</p>
+                                    <strong className="text-amber-400">Orange Line (<InlineMath>{"\\dot{w}=0"}</InlineMath>)</strong>
+                                    <p>Where Recovery stops changing. (The Steady State)</p>
                                 </div>
                             </div>
                         )

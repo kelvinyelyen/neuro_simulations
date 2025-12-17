@@ -16,23 +16,26 @@ export const getLinearContent = (mode: Mode) => {
                         content: (
                             <div className="space-y-2 text-sm text-zinc-300">
                                 <p>
-                                    Thousands of synapses fire onto a single neuron. The cell body (Soma) adds them all up.
+                                    A neuron receives thousands of inputs. It computes a <strong>Weighted Sum</strong> of all these signals to decide whether to spike.
                                 </p>
                                 <ul className="list-disc list-inside ml-2 space-y-1">
-                                    <li><strong className="text-blue-400">Firing Rate (<InlineMath math="x_i" />):</strong> How fast the input neuron is spiking.</li>
-                                    <li><strong className="text-amber-400">Synaptic Weight (<InlineMath math="w_i" />):</strong> How strong the connection is.</li>
+                                    <li><strong className="text-blue-400">Firing Rate (<InlineMath math="x_i" />):</strong> How active the presynaptic neuron is.</li>
+                                    <li><strong className="text-amber-400">Synaptic Weight (<InlineMath math="w_i" />):</strong> The strength (and sign) of the connection.</li>
                                 </ul>
                                 <BlockMath>{"I_{soma} = \\sum w_i \\cdot x_i"}</BlockMath>
                             </div>
                         )
                     },
                     {
-                        title: "Inhibition",
+                        title: "E/I Balance",
                         color: "rose",
                         content: (
                             <div className="text-sm text-zinc-300">
                                 <p>
-                                    <strong>GABAergic neurons</strong> have negative weights. They suppress activity and prevent seizures.
+                                    <strong>Inhibition</strong> is crucial. GABAergic neurons have <strong>negative weights</strong>.
+                                </p>
+                                <p className="mt-1">
+                                    Without this negative feedback (subtraction), the brain would explode into a seizure.
                                 </p>
                             </div>
                         )
@@ -42,7 +45,7 @@ export const getLinearContent = (mode: Mode) => {
 
         default: // 'math' - The Synaptic Mixer
             return {
-                title: "The Synaptic Mixer",
+                title: "Linear Combination",
                 subtitle: "The Dot Product",
                 sections: [
                     {
@@ -51,23 +54,26 @@ export const getLinearContent = (mode: Mode) => {
                         content: (
                             <div className="space-y-2 text-sm text-zinc-300">
                                 <p>
-                                    A single neuron acts like a DJ&apos;s mixing board.
+                                    This is the fundamental operation of Neural Networks: The <strong>Dot Product</strong>.
                                 </p>
                                 <ul className="list-disc list-inside ml-2 space-y-1">
-                                    <li><strong className="text-blue-400">Inputs (<InlineMath math="x_i" />):</strong> The signals coming in (Channels).</li>
-                                    <li><strong className="text-amber-400">Weights (<InlineMath math="w_i" />):</strong> The volume faders.</li>
+                                    <li><strong className="text-blue-400">Vector (<InlineMath math="\vec{x}" />):</strong> The list of input values.</li>
+                                    <li><strong className="text-amber-400">Weights (<InlineMath math="\vec{w}" />):</strong> How much each input matters.</li>
                                 </ul>
                                 <BlockMath>{"y = \\vec{w} \\cdot \\vec{x} = \\sum w_i x_i"}</BlockMath>
                             </div>
                         )
                     },
                     {
-                        title: "Negative Weights?",
+                        title: "Geometry",
                         color: "rose",
                         content: (
                             <div className="text-sm text-zinc-300">
                                 <p>
-                                    In math, &quot;Phase Inversion&quot;. In audio, this cancels out sound. In the brain, this is called <strong>Inhibition</strong>.
+                                    Geometrically, this measures <strong>similarity</strong>.
+                                </p>
+                                <p className="mt-1">
+                                    If <InlineMath>{"\\vec{w}"}</InlineMath> and <InlineMath>{"\\vec{x}"}</InlineMath> point in the same direction, the result is large. If they are perpendicular, the result is zero.
                                 </p>
                             </div>
                         )
