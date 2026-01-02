@@ -36,7 +36,7 @@ export const getPhaseContent = (mode: Mode) => {
                             <div className="text-sm text-zinc-300">
                                 <BlockMath>{"\\dot{V} = -(V - I)"}</BlockMath>
                                 <p>
-                                    Without input, the system decays exponentially to zero. The "velocity" of change depends entirely on how far you are from the target.
+                                    Without input, the system decays exponentially to zero. The &quot;velocity&quot; of change depends entirely on how far you are from the target.
                                 </p>
                             </div>
                         )
@@ -55,7 +55,7 @@ export const getPhaseContent = (mode: Mode) => {
                         content: (
                             <div className="space-y-2 text-sm text-zinc-300">
                                 <p>
-                                    Not all neurons react at the same speed. The Time Constant (<InlineMath>\tau</InlineMath>) dictates how "sluggish" the system is.
+                                    Not all neurons react at the same speed. The Time Constant (<InlineMath>\tau</InlineMath>) dictates how &quot;sluggish&quot; the system is.
                                 </p>
                                 <BlockMath>{"\\tau \\dot{V} = -(V - I)"}</BlockMath>
                             </div>
