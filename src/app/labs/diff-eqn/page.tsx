@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from 'next/link';
 import { Slider } from "@/components/ui/slider";
-import { FunctionSquare, Compass, Timer, Anchor, Activity, Zap, Settings2 } from "lucide-react";
+import { FunctionSquare, Compass, Timer, Anchor, Zap, Settings2 } from "lucide-react";
 import {
     Select,
     SelectContent,
