@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from 'next/link';
 import { Slider } from "@/components/ui/slider";
-import { FunctionSquare, Compass, Timer, Anchor, Zap, Settings2 } from "lucide-react";
+import { FunctionSquare, Compass, Timer, Anchor, Zap, Settings2, Activity } from "lucide-react";
 import {
     Select,
     SelectContent,
@@ -244,156 +244,170 @@ export default function PhasePlanePage() {
 
     return (
         <div className="h-screen bg-zinc-950 text-zinc-200 flex flex-col overflow-hidden select-none font-sans">
-            <header className="h-14 border-b border-zinc-900 flex items-center justify-between px-6 bg-zinc-950 shrink-0">
-                <div className="flex items-center gap-4">
-                    <Compass className={cn("w-5 h-5", mode === 'spike' ? "text-emerald-500" : "text-blue-500")} />
-                    <h1 className="text-base font-semibold tracking-tight text-white">
-                        <Link href="/" className="hover:opacity-80 transition-opacity">ISCN</Link>
-                        <span className="mx-3 text-zinc-700">/</span>
-                        <span className="text-zinc-400 font-medium">Neural Dynamics</span>
-                    </h1>
+            
+            {/* MOBILE GUARD */}
+            <div className="flex md:hidden flex-col items-center justify-center h-full p-8 text-center space-y-6 bg-zinc-950 z-50 fixed inset-0">
+                <div className="w-16 h-16 rounded-full bg-zinc-900 flex items-center justify-center border border-zinc-800">
+                    <Activity className="w-8 h-8 text-emerald-500 animate-pulse" />
                 </div>
-
-                <div className="flex items-center gap-4">
-                    <Select value={mode} onValueChange={(v: Mode) => setMode(v)}>
-                        <SelectTrigger className="w-[180px] h-9 bg-zinc-900 border-zinc-800 text-sm text-zinc-200 font-mono focus:ring-0 outline-none">
-                            <SelectValue placeholder="Select Lab" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-zinc-900 border-zinc-800 text-zinc-200">
-                            <SelectItem value="leak">The Leak</SelectItem>
-                            <SelectItem value="time-constant">Time Constant (τ)</SelectItem>
-                            <SelectItem value="fixed-points">Fixed Points</SelectItem>
-                            <SelectItem value="spike">Phase Plane</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <ConceptDialog {...content} />
+                <div>
+                    <h1 className="text-xl font-bold text-white mb-2">Scientific Workstation</h1>
+                    <p className="text-zinc-500 text-sm leading-relaxed max-w-xs mx-auto">
+                        Please access this simulation on a <span className="text-zinc-300">Desktop</span> or <span className="text-zinc-300">Tablet</span>.
+                    </p>
                 </div>
-            </header>
+            </div>
 
-            {/* Added items-start here to prevent sidebar stretching */}
-            <main className="flex-1 flex overflow-hidden p-6 gap-6 items-start">
-                
-                {/* Sidebar: h-fit, max-h-full, and sticky behavior if needed */}
-                <aside className="w-[400px] flex flex-col shrink-0 overflow-hidden bg-zinc-900/50 border border-zinc-800 rounded-2xl shadow-sm h-fit max-h-full">
+            {/* DESKTOP CONTENT */}
+            <div className="hidden md:flex flex-col h-full">
+                {/* Header */}
+                <header className="h-14 border-b border-zinc-900 flex items-center justify-between px-6 bg-zinc-950 shrink-0">
+                    <div className="flex items-center gap-4">
+                        <Compass className={cn("w-5 h-5", mode === 'spike' ? "text-emerald-500" : "text-blue-500")} />
+                        <h1 className="text-lg font-semibold tracking-tight text-white">
+                            <Link href="/" className="hover:opacity-80 transition-opacity">ISCN</Link>
+                            <span className="mx-3 text-zinc-700">/</span>
+                            <span className="text-zinc-400 font-medium">Phase 2: Differential Equations</span>
+                        </h1>
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                        <Select value={mode} onValueChange={(v: Mode) => setMode(v)}>
+                            <SelectTrigger className="w-[180px] h-9 bg-zinc-900 border-zinc-800 text-sm text-zinc-200 font-mono focus:ring-0 outline-none">
+                                <SelectValue placeholder="Select Lab" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-zinc-900 border-zinc-800 text-zinc-200">
+                                <SelectItem value="leak">1. The Leak</SelectItem>
+                                <SelectItem value="time-constant">2. Time Constant (τ)</SelectItem>
+                                <SelectItem value="fixed-points">3. Fixed Points</SelectItem>
+                                <SelectItem value="spike">4. Phase Plane</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <ConceptDialog {...content} />
+                    </div>
+                </header>
+
+                <main className="flex-1 flex overflow-hidden p-6 gap-6 items-start">
                     
-                    <div className="flex flex-col p-6 overflow-y-auto [&::-webkit-scrollbar]:hidden">
+                    {/* Sidebar: h-fit, max-h-full, and sticky behavior if needed */}
+                    <aside className="w-[400px] flex flex-col shrink-0 overflow-hidden bg-zinc-900/50 border border-zinc-800 rounded-2xl shadow-sm h-fit max-h-full">
                         
-                        {/* 1. TOP: Equation */}
-                        <div className="space-y-6 shrink-0">
-                            <div className="space-y-4">
-                                <div className="flex items-center gap-2">
-                                    <FunctionSquare className="w-3.5 h-3.5 text-zinc-600" />
-                                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-600 font-mono">Governing Equation</span>
+                        <div className="flex flex-col p-6 overflow-y-auto [&::-webkit-scrollbar]:hidden">
+                            
+                            {/* 1. TOP: Equation */}
+                            <div className="space-y-6 shrink-0">
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-2">
+                                        <FunctionSquare className="w-3.5 h-3.5 text-zinc-600" />
+                                        <span className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-600 font-mono">Governing Equation</span>
+                                    </div>
+                                    <div className="bg-black/30 rounded-xl p-4 flex flex-col items-center justify-center border border-zinc-800/30 min-h-[90px] text-zinc-200">
+                                        <BlockMath math={labels.eq} />
+                                    </div>
                                 </div>
-                                <div className="bg-black/30 rounded-xl p-4 flex flex-col items-center justify-center border border-zinc-800/30 min-h-[90px] text-zinc-200">
-                                    <BlockMath math={labels.eq} />
+                            </div>
+
+                            {/* 2. MIDDLE: Controls */}
+                            <div className="flex-col space-y-8 py-6">
+                                
+                                {/* Parameter Section */}
+                                <div className="space-y-4 pt-6 border-t border-zinc-800/50">
+                                    <div className="space-y-1">
+                                        <div className="flex items-center gap-2">
+                                            <Settings2 className="w-3.5 h-3.5 text-zinc-600" />
+                                            <span className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-600 font-mono">System Parameters</span>
+                                        </div>
+                                        <p className="text-[10px] text-zinc-500 leading-tight">
+                                            {labels.desc} 
+                                        </p>
+                                    </div>
+
+                                    <div className="space-y-6">
+                                        {/* Input Current Slider */}
+                                        <div className="space-y-2 p-2 rounded border border-zinc-800/30 bg-zinc-900/30">
+                                            <div className="flex justify-between items-center text-[10px] font-mono text-zinc-400">
+                                                <div className="flex items-center gap-2">
+                                                    <Zap className="w-3 h-3 text-amber-500" />
+                                                    <span>{labels.param}</span>
+                                                </div>
+                                                <span className={cn("font-bold", mode === 'spike' ? "text-emerald-400" : "text-blue-400")}>{paramI.toFixed(2)}</span>
+                                            </div>
+                                            <Slider
+                                                value={[paramI]} min={-1.0} max={1.5} step={0.01}
+                                                onValueChange={(val) => setParamI(val[0])}
+                                                className={cn("py-2", mode === 'spike' ? "[&_[role=slider]]:bg-emerald-500" : "[&_[role=slider]]:bg-blue-500")}
+                                            />
+                                        </div>
+
+                                        {/* Time Constant Slider - Only visible in relevant modes */}
+                                        {(mode === 'time-constant' || mode === 'leak') && (
+                                            <div className="space-y-2 p-2 rounded border border-zinc-800/30 bg-zinc-900/30 animate-in fade-in slide-in-from-top-2">
+                                                <div className="flex justify-between items-center text-[10px] font-mono text-zinc-400">
+                                                    <div className="flex items-center gap-2">
+                                                        <Timer className="w-3 h-3 text-zinc-500" />
+                                                        <span>Time Constant (τ)</span>
+                                                    </div>
+                                                    <span className="text-white font-bold">{tau.toFixed(2)}</span>
+                                                </div>
+                                                <Slider
+                                                    value={[tau]} min={0.1} max={3.0} step={0.1}
+                                                    onValueChange={(val) => setTau(val[0])}
+                                                    className="py-2 [&_[role=slider]]:bg-white"
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    </aside>
 
-                        {/* 2. MIDDLE: Controls */}
-                        <div className="flex-col space-y-8 py-6">
+                    {/* Right Panel needs h-full to fill vertical space since parent is items-start */}
+                    <section className="flex-1 h-full min-w-0 bg-zinc-900/30 border border-zinc-800 rounded-2xl overflow-hidden flex flex-col relative shadow-inner">
+                        <div className="flex-1 relative cursor-crosshair">
+                            <canvas
+                                ref={canvasRef}
+                                onMouseMove={handleMouseMove}
+                                onMouseLeave={() => setMousePos(null)}
+                                className="w-full h-full"
+                            />
                             
-                            {/* Parameter Section */}
-                            <div className="space-y-4 pt-6 border-t border-zinc-800/50">
-                                <div className="space-y-1">
-                                    <div className="flex items-center gap-2">
-                                        <Settings2 className="w-3.5 h-3.5 text-zinc-600" />
-                                        <span className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-600 font-mono">System Parameters</span>
+                            {/* FLOATING PROBE HUD - Top Right Corner */}
+                            <div className="absolute top-4 right-4 pointer-events-none">
+                                <div className={cn(
+                                    "backdrop-blur-md bg-zinc-950/80 border border-zinc-800/50 p-3 rounded-lg shadow-2xl transition-all duration-200",
+                                    liveState ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
+                                )}>
+                                    <div className="flex items-center gap-2 mb-2 border-b border-zinc-800/50 pb-2">
+                                        <Anchor className="w-3 h-3 text-emerald-500" />
+                                        <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 font-mono">Probe</span>
                                     </div>
-                                    <p className="text-[10px] text-zinc-500 leading-tight">
-                                        {labels.desc} 
-
-[Image of Action Potential]
-
-                                    </p>
-                                </div>
-
-                                <div className="space-y-6">
-                                    {/* Input Current Slider */}
-                                    <div className="space-y-2 p-2 rounded border border-zinc-800/30 bg-zinc-900/30">
-                                        <div className="flex justify-between items-center text-[10px] font-mono text-zinc-400">
-                                            <div className="flex items-center gap-2">
-                                                <Zap className="w-3 h-3 text-amber-500" />
-                                                <span>{labels.param}</span>
+                                    {liveState && (
+                                        <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs font-mono">
+                                            <div className="text-zinc-500">x (V):</div>
+                                            <div className="text-zinc-200 text-right">{liveState.x.toFixed(2)}</div>
+                                            
+                                            <div className="text-zinc-500">y (w):</div>
+                                            <div className="text-zinc-200 text-right">{liveState.y.toFixed(2)}</div>
+                                            
+                                            <div className="col-span-2 pt-2 mt-1 border-t border-zinc-800/50 text-center text-zinc-400">
+                                                <InlineMath math={`\\dot{\\vec{x}} = [${liveState.dx.toFixed(2)}, ${liveState.dy.toFixed(2)}]`} />
                                             </div>
-                                            <span className={cn("font-bold", mode === 'spike' ? "text-emerald-400" : "text-blue-400")}>{paramI.toFixed(2)}</span>
-                                        </div>
-                                        <Slider
-                                            value={[paramI]} min={-1.0} max={1.5} step={0.01}
-                                            onValueChange={(val) => setParamI(val[0])}
-                                            className={cn("py-2", mode === 'spike' ? "[&_[role=slider]]:bg-emerald-500" : "[&_[role=slider]]:bg-blue-500")}
-                                        />
-                                    </div>
-
-                                    {/* Time Constant Slider - Only visible in relevant modes */}
-                                    {(mode === 'time-constant' || mode === 'leak') && (
-                                        <div className="space-y-2 p-2 rounded border border-zinc-800/30 bg-zinc-900/30 animate-in fade-in slide-in-from-top-2">
-                                            <div className="flex justify-between items-center text-[10px] font-mono text-zinc-400">
-                                                <div className="flex items-center gap-2">
-                                                    <Timer className="w-3 h-3 text-zinc-500" />
-                                                    <span>Time Constant (τ)</span>
-                                                </div>
-                                                <span className="text-white font-bold">{tau.toFixed(2)}</span>
-                                            </div>
-                                            <Slider
-                                                value={[tau]} min={0.1} max={3.0} step={0.1}
-                                                onValueChange={(val) => setTau(val[0])}
-                                                className="py-2 [&_[role=slider]]:bg-white"
-                                            />
                                         </div>
                                     )}
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </aside>
 
-                {/* Right Panel needs h-full to fill vertical space since parent is items-start */}
-                <section className="flex-1 h-full min-w-0 bg-zinc-900/30 border border-zinc-800 rounded-2xl overflow-hidden flex flex-col relative shadow-inner">
-                    <div className="flex-1 relative cursor-crosshair">
-                        <canvas
-                            ref={canvasRef}
-                            onMouseMove={handleMouseMove}
-                            onMouseLeave={() => setMousePos(null)}
-                            className="w-full h-full"
-                        />
-                        
-                        {/* FLOATING PROBE HUD - Top Right Corner */}
-                        <div className="absolute top-4 right-4 pointer-events-none">
-                            <div className={cn(
-                                "backdrop-blur-md bg-zinc-950/80 border border-zinc-800/50 p-3 rounded-lg shadow-2xl transition-all duration-200",
-                                liveState ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
-                            )}>
-                                <div className="flex items-center gap-2 mb-2 border-b border-zinc-800/50 pb-2">
-                                    <Anchor className="w-3 h-3 text-emerald-500" />
-                                    <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 font-mono">Probe</span>
-                                </div>
-                                {liveState && (
-                                    <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs font-mono">
-                                        <div className="text-zinc-500">x (V):</div>
-                                        <div className="text-zinc-200 text-right">{liveState.x.toFixed(2)}</div>
-                                        
-                                        <div className="text-zinc-500">y (w):</div>
-                                        <div className="text-zinc-200 text-right">{liveState.y.toFixed(2)}</div>
-                                        
-                                        <div className="col-span-2 pt-2 mt-1 border-t border-zinc-800/50 text-center text-zinc-400">
-                                            <InlineMath math={`\\dot{\\vec{x}} = [${liveState.dx.toFixed(2)}, ${liveState.dy.toFixed(2)}]`} />
-                                        </div>
-                                    </div>
-                                )}
+                            <div className="absolute bottom-4 right-6 text-xs font-bold text-zinc-600 font-mono pointer-events-none">
+                                {labels.xAxis} axis
+                            </div>
+                            <div className="absolute top-6 left-1/2 -translate-x-1/2 text-xs font-bold text-zinc-600 font-mono pointer-events-none">
+                                {labels.yAxis} axis
                             </div>
                         </div>
-
-                        <div className="absolute bottom-4 right-6 text-xs font-bold text-zinc-600 font-mono pointer-events-none">
-                            {labels.xAxis} axis
-                        </div>
-                        <div className="absolute top-6 left-1/2 -translate-x-1/2 text-xs font-bold text-zinc-600 font-mono pointer-events-none">
-                            {labels.yAxis} axis
-                        </div>
-                    </div>
-                </section>
-            </main>
+                    </section>
+                </main>
+            </div>
         </div>
     );
 }
