@@ -264,10 +264,10 @@ export default function PhasePlanePage() {
                 <header className="h-14 border-b border-zinc-900 flex items-center justify-between px-6 bg-zinc-950 shrink-0">
                     <div className="flex items-center gap-4">
                         <Compass className={cn("w-5 h-5", mode === 'spike' ? "text-emerald-500" : "text-blue-500")} />
-                        <h1 className="text-lg font-semibold tracking-tight text-white">
+                        <h1 className="text-base font-semibold tracking-tight text-white">
                             <Link href="/" className="hover:opacity-80 transition-opacity">ISCN</Link>
                             <span className="mx-3 text-zinc-700">/</span>
-                            <span className="text-zinc-400 font-medium">Phase 2: Differential Equations</span>
+                            <span className="text-zinc-400 font-medium">Neural Dynamics</span>
                         </h1>
                     </div>
 
@@ -276,11 +276,11 @@ export default function PhasePlanePage() {
                             <SelectTrigger className="w-[180px] h-9 bg-zinc-900 border-zinc-800 text-sm text-zinc-200 font-mono focus:ring-0 outline-none">
                                 <SelectValue placeholder="Select Lab" />
                             </SelectTrigger>
-                            <SelectContent className="bg-zinc-900 border-zinc-800">
-                                <SelectItem value="leak">1. The Leak</SelectItem>
-                                <SelectItem value="time-constant">2. Time Constant (τ)</SelectItem>
-                                <SelectItem value="fixed-points">3. Fixed Points</SelectItem>
-                                <SelectItem value="spike">4. Phase Plane</SelectItem>
+                            <SelectContent className="bg-zinc-900 border-zinc-800 text-zinc-200">
+                                <SelectItem value="leak">The Leak</SelectItem>
+                                <SelectItem value="time-constant">Time Constant (τ)</SelectItem>
+                                <SelectItem value="fixed-points">Fixed Points</SelectItem>
+                                <SelectItem value="spike">Phase Plane</SelectItem>
                             </SelectContent>
                         </Select>
                         <ConceptDialog {...content} />
