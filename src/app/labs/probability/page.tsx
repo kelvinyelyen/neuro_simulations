@@ -262,7 +262,7 @@ export default function ProbabilityPage() {
 
             {/* DESKTOP CONTENT */}
             <div className="hidden md:flex flex-col h-full w-full">
-                <header className="h-12 border-b border-zinc-900 flex items-center justify-between px-4 bg-zinc-950/80 backdrop-blur-sm z-10 shrink-0">
+                <header className="h-12 border-b border-zinc-900 flex items-center justify-between px-6 bg-zinc-950/80 backdrop-blur-sm z-10 shrink-0">
                     <div className="flex items-center gap-3">
                         <div className={cn("w-2 h-2 rounded-full animate-pulse", mode === 'coin' ? "bg-emerald-500" : "bg-purple-500")} />
                         <h1 className="text-lg font-bold tracking-tight text-white">
@@ -291,52 +291,78 @@ export default function ProbabilityPage() {
                     </div>
                 </header>
 
-                <main className="flex-1 overflow-y-auto bg-zinc-950 relative scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
-                    {/* Layout container: Left sidebar for controls, right for visualization */}
-                    <div className="min-h-full flex flex-row items-start justify-start p-8 gap-10 lg:px-16">
+                <main className="flex-1 bg-zinc-950 relative overflow-hidden">
+                    <div className="h-full flex flex-row items-center justify-start p-8 gap-12 lg:px-20">
                         
-                        {/* Control Box on the Left */}
-                        <div className="w-80 space-y-6 bg-zinc-900/80 p-6 rounded-xl border border-white/10 backdrop-blur-sm shrink-0 sticky top-8">
-                            <div className="space-y-4">
-                                <div className="flex justify-between items-center">
-                                    <label className={cn("text-sm font-medium transition-colors", labels.color)}>
-                                        {labels.param}
-                                    </label>
-                                    <span className={cn("font-mono text-xs bg-zinc-950 px-2 py-1 rounded", labels.color)}>
+                        {/* Control Box - Fixed Width Sidebar */}
+                        <div className="w-80 space-y-6 bg-zinc-900/60 p-6 rounded-2xl border border-white/5 backdrop-blur-md shrink-0 shadow-xl">
+                            <div className="space-y-5">
+                                <div className="flex justify-between items-end">
+                                    <div className="space-y-1">
+                                        <label className={cn("text-xs font-bold uppercase tracking-widest transition-colors opacity-70", labels.color)}>
+                                            Parameter
+                                        </label>
+                                        <div className="text-sm font-medium text-zinc-200">{labels.param}</div>
+                                    </div>
+                                    <span className={cn("font-mono text-lg bg-zinc-950/50 px-3 py-1 rounded-lg border border-white/5", labels.color)}>
                                         {rate.toFixed(2)}
                                     </span>
                                 </div>
+                                
                                 <Slider
                                     value={[rate]}
                                     min={0.01}
                                     max={0.99}
                                     step={0.01}
                                     onValueChange={([v]) => setRate(v)}
-                                    className={cn("py-2", mode === 'poisson' ? "[&_[role=slider]]:bg-purple-500" : "[&_[role=slider]]:bg-emerald-500")}
+                                    className={cn(
+                                        "py-2 cursor-pointer", 
+                                        mode === 'poisson' ? "[&_[role=slider]]:bg-purple-500" : "[&_[role=slider]]:bg-emerald-500"
+                                    )}
                                 />
-                                <p className="text-xs text-zinc-500 italic leading-relaxed">
+                                
+                                <p className="text-[11px] text-zinc-500 leading-relaxed bg-white/5 p-3 rounded-lg border border-white/5 italic">
                                     {labels.desc}
                                 </p>
                             </div>
 
-                            <div className="pt-4 border-t border-zinc-800">
-                                <div className="flex flex-col gap-2 text-sm">
-                                    <span className="text-zinc-500 text-xs uppercase tracking-wider font-bold">Telemetry</span>
-                                    <span className="font-mono text-white bg-zinc-950 p-2 rounded border border-zinc-800 text-center">
-                                        {labels.live()}
-                                    </span>
+                            <div className="pt-6 border-t border-white/5">
+                                <div className="space-y-3">
+                                    <span className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em]">Real-time Telemetry</span>
+                                    <div className="font-mono text-xs text-white bg-black/40 p-3 rounded-xl border border-white/5 flex flex-col gap-1">
+                                        <div className="flex justify-between opacity-50">
+                                            <span>Stream State</span>
+                                            <span className="animate-pulse">Active</span>
+                                        </div>
+                                        <div className="text-sm pt-1 text-center font-bold">
+                                            {labels.live()}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Visualization on the Right */}
-                        <div className="flex-1 flex flex-col items-center">
-                            <canvas
-                                ref={canvasRef}
-                                width={800}
-                                height={400}
-                                className="rounded-lg shadow-2xl border border-zinc-800 bg-zinc-900/80 w-full max-w-4xl"
-                            />
+                        {/* Visualization - Expands to fit remaining space */}
+                        <div className="flex-1 h-full flex items-center justify-center min-w-0">
+                            <div className="relative group w-full max-w-4xl">
+                                {/* Decorative Glow */}
+                                <div className={cn(
+                                    "absolute -inset-1 rounded-xl blur opacity-10 transition duration-1000 group-hover:opacity-20",
+                                    mode === 'poisson' ? "bg-purple-500" : "bg-emerald-500"
+                                )} />
+                                
+                                <canvas
+                                    ref={canvasRef}
+                                    width={800}
+                                    height={400}
+                                    className="relative rounded-xl shadow-2xl border border-white/10 bg-zinc-900/90 w-full h-auto aspect-[2/1]"
+                                />
+                                
+                                {/* Scale Label */}
+                                <div className="absolute bottom-4 left-4 text-[10px] text-zinc-600 font-mono">
+                                    Canvas_Buffer: 800x400_px
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </main>
