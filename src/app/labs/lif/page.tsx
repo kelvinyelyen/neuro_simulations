@@ -24,12 +24,14 @@ import {
     CartesianGrid,
     ResponsiveContainer,
     ReferenceLine,
-    Tooltip
+    Tooltip,
+    TooltipProps
 } from 'recharts';
 import { cn } from '@/lib/utils';
 import { InputMode } from '@/lib/physics/lif';
 
-const CustomTooltip = ({ active, payload }: any) => {
+// Fix 1: Specified Tooltip types instead of 'any'
+const CustomTooltip = ({ active, payload }: TooltipProps<number, string>) => {
     if (active && payload && payload.length) {
         const data = payload[0].payload;
         return (
@@ -47,7 +49,8 @@ const CustomTooltip = ({ active, payload }: any) => {
 
 export default function LifLab() {
     const {
-        params, setParams, updateConfig,
+        params, setParams, 
+        // Fix 2: Removed unused 'updateConfig'
         history, ghostTrace, captureGhostTrace, clearGhostTrace,
         isRunning, setIsRunning, resetSimulation, step,
         hoveredTerm, setHoveredTerm
@@ -64,7 +67,9 @@ export default function LifLab() {
 
     useEffect(() => {
         requestRef.current = requestAnimationFrame(animate);
-        return () => cancelAnimationFrame(requestRef.current!);
+        return () => {
+            if (requestRef.current) cancelAnimationFrame(requestRef.current);
+        };
     }, [animate]);
 
     const onSliderChangeStart = () => {
@@ -84,8 +89,6 @@ export default function LifLab() {
 
     return (
         <div className="h-screen bg-zinc-950 text-zinc-200 flex flex-col overflow-hidden select-none font-sans">
-            
-            {/* Header */}
             <header className="h-14 border-b border-zinc-900 flex items-center justify-between px-6 bg-zinc-950 shrink-0">
                 <div className="flex items-center gap-4">
                     <Activity className="w-5 h-5 text-emerald-500" />
@@ -117,12 +120,8 @@ export default function LifLab() {
             </header>
 
             <main className="flex-1 flex overflow-hidden p-8 gap-8">
-                
-                {/* Left Panel: Control Box */}
                 <aside className="w-80 flex flex-col gap-6 shrink-0">
                     <div className="bg-zinc-900/50 border border-zinc-800 p-6 rounded-2xl space-y-8 flex flex-col shadow-sm">
-                        
-                        {/* Equation Box */}
                         <div className="space-y-4">
                             <div className="flex items-center gap-2">
                                 <FunctionSquare className="w-3.5 h-3.5 text-zinc-600" />
@@ -143,12 +142,9 @@ export default function LifLab() {
                             </div>
                         </div>
 
-                        {/* Sliders Area */}
                         <div className="space-y-6 pt-2 overflow-y-auto pr-1 scrollbar-hide">
                             <div className="space-y-4">
                                 <span className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-600 font-mono">Biophysics</span>
-                                
-                                {/* Resistance */}
                                 <div className="space-y-3" onMouseEnter={() => setHoveredTerm('R')} onMouseLeave={() => setHoveredTerm(null)}>
                                     <div className="flex justify-between items-center font-mono">
                                         <span className="text-[10px] text-zinc-500 font-bold">Resistance (R)</span>
@@ -161,8 +157,6 @@ export default function LifLab() {
                                         className="[&_[role=slider]]:bg-emerald-500"
                                     />
                                 </div>
-
-                                {/* Leak */}
                                 <div className="space-y-3" onMouseEnter={() => setHoveredTerm('E_L')} onMouseLeave={() => setHoveredTerm(null)}>
                                     <div className="flex justify-between items-center font-mono">
                                         <span className="text-[10px] text-zinc-500 font-bold">Leak Pot. (E_L)</span>
@@ -177,7 +171,6 @@ export default function LifLab() {
                                 </div>
                             </div>
 
-                            {/* Input Stimulus Card */}
                             <div className="pt-6 border-t border-zinc-800/50 space-y-4">
                                 <div className="flex items-center justify-between">
                                     <span className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-600 font-mono">Stimulus</span>
@@ -193,8 +186,6 @@ export default function LifLab() {
                                         </SelectContent>
                                     </Select>
                                 </div>
-
-                                {/* Dynamic Input Slider */}
                                 <div className="p-3 rounded-xl bg-amber-500/5 border border-amber-500/10 space-y-3">
                                     <div className="flex justify-between items-center font-mono">
                                         <span className="text-[9px] text-amber-500/70 font-bold">Amplitude</span>
@@ -208,18 +199,13 @@ export default function LifLab() {
                                 </div>
                             </div>
                         </div>
-
-                        {/* Force Balance Viz integration */}
                         <div className="pt-2">
                              <ForceBalance />
                         </div>
                     </div>
                 </aside>
 
-                {/* Right Panel: Oscilloscope Workstation */}
                 <section className="flex-1 min-w-0 bg-zinc-900/30 border border-zinc-800 rounded-2xl overflow-hidden flex flex-col relative shadow-inner">
-                    
-                    {/* Ghost Controls Overlay */}
                     {ghostTrace && (
                         <div className="absolute top-4 right-4 z-20">
                             <Button 
@@ -257,17 +243,17 @@ export default function LifLab() {
                         </ResponsiveContainer>
                     </div>
 
-                    {/* Workstation Footer */}
                     <div className="p-4 px-10 border-t border-zinc-800/50 flex justify-between items-center bg-zinc-950/50">
                         <div className="flex items-center gap-3">
                             <div className={cn("w-2 h-2 rounded-full", isRunning ? "bg-emerald-500 animate-pulse" : "bg-zinc-600")} />
                             <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 font-mono tracking-tight">
-                                Telemetry: {isRunning ? 'Streaming' : 'Idle'} // DT: 0.1ms
+                                {/* Fix 3: Removed raw comment string, use template literal or JS comment block */}
+                                {`Telemetry: ${isRunning ? 'Streaming' : 'Idle'} // DT: 0.1ms`}
                             </span>
                         </div>
                         <div className="flex gap-6">
                             <span className="text-[10px] text-zinc-700 uppercase tracking-widest font-mono">Mode: {params.inputMode}</span>
-                            <span className="text-[10px] text-zinc-700 uppercase tracking-widest font-mono">Engine: LIF_INTEGRATOR_V2</span>
+                            <span className="text-[10px] text-zinc-700 uppercase tracking-widest font-mono">Engine: LIF_V2</span>
                         </div>
                     </div>
                 </section>
