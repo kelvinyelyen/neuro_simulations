@@ -15,7 +15,7 @@ import {
     SelectTrigger,
     SelectValue
 } from '@/components/ui/select';
-import { Play, Pause, RotateCcw, Activity } from 'lucide-react';
+import { Play, Pause, RotateCcw, Activity, FunctionSquare } from 'lucide-react';
 import {
     LineChart,
     Line,
@@ -29,13 +29,11 @@ import {
 import { cn } from '@/lib/utils';
 import { InputMode } from '@/lib/physics/lif';
 
-// Custom Tooltip for Recharts
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
         const data = payload[0].payload;
         return (
-            <div className="bg-zinc-900 border border-zinc-800 p-2 rounded shadow-xl text-xs font-mono z-50 backdrop-blur-md bg-opacity-90">
+            <div className="bg-zinc-900 border border-zinc-800 p-2 rounded shadow-xl text-[10px] font-mono z-50 backdrop-blur-md bg-opacity-90">
                 <div className="text-zinc-500 mb-1">{`Time: ${data.time.toFixed(1)} ms`}</div>
                 <div className="text-emerald-400">{`Voltage: ${data.voltage.toFixed(2)} mV`}</div>
                 {data.input !== undefined && (
@@ -55,12 +53,10 @@ export default function LifLab() {
         hoveredTerm, setHoveredTerm
     } = useSimulationStore();
 
-    // Animation Loop
     const requestRef = useRef<number>();
 
     const animate = useCallback(() => {
         if (isRunning) {
-            // Speed up: 2 steps per frame for fluid but not too fast
             step(); step();
         }
         requestRef.current = requestAnimationFrame(animate);
@@ -77,407 +73,205 @@ export default function LifLab() {
         }
     };
 
-    // Helper to render math formula based on mode
     const renderInputMath = () => {
         switch (params.inputMode) {
-            case 'pulse':
-                return <span className="text-amber-400">I(t) = A · δ(t - t_spike)</span>;
-            case 'noise':
-                return <span className="text-amber-400">I(t) = I_mean + σ · Random()</span>;
-            case 'sine':
-                return <span className="text-amber-400">I(t) = A · sin(2πft)</span>;
-            case 'constant':
-            default:
-                return <span className="text-amber-400">I</span>;
+            case 'pulse': return "I(t) = A · δ(t - t_{spike})";
+            case 'noise': return "I(t) = I_{mean} + σ · ξ(t)";
+            case 'sine': return "I(t) = A · sin(2πft)";
+            default: return "I = Constant";
         }
     };
 
     return (
-        <div className="h-screen bg-zinc-950 text-zinc-200 font-mono flex flex-col overflow-hidden">
-
-            {/* MOBILE GUARD */}
-            <div className="flex md:hidden flex-col items-center justify-center h-full p-8 text-center space-y-6 bg-zinc-950 z-50">
-                <div className="w-16 h-16 rounded-full bg-zinc-900 flex items-center justify-center border border-zinc-800">
-                    <Activity className="w-8 h-8 text-emerald-500 animate-pulse" />
+        <div className="h-screen bg-zinc-950 text-zinc-200 flex flex-col overflow-hidden select-none font-sans">
+            
+            {/* Header */}
+            <header className="h-14 border-b border-zinc-900 flex items-center justify-between px-6 bg-zinc-950 shrink-0">
+                <div className="flex items-center gap-4">
+                    <Activity className="w-5 h-5 text-emerald-500" />
+                    <h1 className="text-lg font-semibold tracking-tight text-white">
+                        <Link href="/" className="hover:opacity-80 transition-opacity">ISCN</Link>
+                        <span className="mx-3 text-zinc-700">/</span>
+                        <span className="text-zinc-400 font-medium">LIF Synthesis</span>
+                    </h1>
                 </div>
-                <div>
-                    <h1 className="text-xl font-bold text-white mb-2">Scientific Workstation</h1>
-                    <p className="text-zinc-500 text-sm leading-relaxed max-w-xs mx-auto">
-                        Please access this simulation on a <span className="text-zinc-300">Desktop</span> or <span className="text-zinc-300">Tablet</span>.
-                    </p>
-                </div>
-            </div>
 
-            {/* DESKTOP CONTENT */}
-            <div className="hidden md:flex flex-col h-full">
-                {/* Compact Header */}
-                <header className="h-12 border-b border-zinc-900 flex items-center justify-between px-4 bg-zinc-950/80 backdrop-blur-sm z-10 shrink-0">
-                    <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                        <h1 className="text-lg font-bold tracking-tight text-white">
-                            <Link href="/" className="hover:text-emerald-400 transition-colors">ISCN</Link> <span className="text-zinc-400 font-normal text-base">| LIF Synthesis</span>
-                        </h1>
+                <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-1 mr-2">
+                        <Button
+                            size="icon" variant="ghost" className="h-8 w-8 text-zinc-500 hover:text-white"
+                            onClick={() => setIsRunning(!isRunning)}
+                        >
+                            {isRunning ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                        </Button>
+                        <Button
+                            size="icon" variant="ghost" className="h-8 w-8 text-zinc-500 hover:text-white"
+                            onClick={resetSimulation}
+                        >
+                            <RotateCcw className="h-4 w-4" />
+                        </Button>
                     </div>
+                    <div className="h-4 w-px bg-zinc-800" />
                     <ConceptDialog {...lifContent} />
-                </header>
+                </div>
+            </header>
 
-                <main className="flex-1 grid grid-cols-12 gap-0 overflow-hidden h-full">
-
-                    {/* LEFT COLUMN: Controls (Scrollable but hidden scrollbar) - Reverted Width, Increased Spacing */}
-                    <div className="col-span-4 lg:col-span-3 flex flex-col border-r border-zinc-900 bg-zinc-925 relative">
-                        <div className="absolute inset-0 overflow-y-auto [&::-webkit-scrollbar]:hidden scrollbar-hide p-6 space-y-6">
-
-                            {/* 1. Equation Block */}
-                            <div className="p-6 bg-zinc-900/40 border border-zinc-800 rounded-lg shadow-sm">
-                                <h2 className="text-xs text-zinc-400 uppercase tracking-widest mb-4 text-center font-semibold">Governing Equation</h2>
-                                <div className="flex flex-wrap justify-center items-center text-xl font-bold font-mono">
-                                    <span className="text-zinc-400 mr-2">τ·</span>
-                                    <span className="text-zinc-300">V&apos;</span>
-                                    <span className="mx-3 text-zinc-600">=</span>
-                                    <span className="text-zinc-400 mr-1">-</span>
-                                    <span className="text-zinc-300">(V-</span>
-                                    <span
-                                        className={cn(
-                                            "cursor-help transition-colors duration-200",
-                                            hoveredTerm === 'E_L' ? "text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]" : "text-cyan-400"
-                                        )}
-                                        onMouseEnter={() => setHoveredTerm('E_L')}
-                                        onMouseLeave={() => setHoveredTerm(null)}
-                                    >
-                                        E_L
-                                    </span>
-                                    <span className="text-zinc-300">)</span>
-                                    <span className="mx-3 text-zinc-600">+</span>
-                                    <span
-                                        className={cn(
-                                            "cursor-help transition-colors duration-200",
-                                            hoveredTerm === 'R' ? "text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]" : "text-emerald-400"
-                                        )}
-                                        onMouseEnter={() => setHoveredTerm('R')}
-                                        onMouseLeave={() => setHoveredTerm(null)}
-                                    >
-                                        R
-                                    </span>
-                                    <span className="mx-1 text-zinc-600">·</span>
-                                    <span
-                                        className={cn(
-                                            "cursor-help transition-colors duration-200",
-                                            hoveredTerm === 'I' || hoveredTerm === 'Drive' ? "text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]" : "text-amber-400"
-                                        )}
-                                        onMouseEnter={() => setHoveredTerm('I')}
-                                        onMouseLeave={() => setHoveredTerm(null)}
-                                    >
-                                        {params.inputMode === 'constant' ? 'I' : 'I(t)'}
-                                    </span>
+            <main className="flex-1 flex overflow-hidden p-8 gap-8">
+                
+                {/* Left Panel: Control Box */}
+                <aside className="w-80 flex flex-col gap-6 shrink-0">
+                    <div className="bg-zinc-900/50 border border-zinc-800 p-6 rounded-2xl space-y-8 flex flex-col shadow-sm">
+                        
+                        {/* Equation Box */}
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-2">
+                                <FunctionSquare className="w-3.5 h-3.5 text-zinc-600" />
+                                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-600 font-mono">Governing Equation</span>
+                            </div>
+                            <div className="bg-black/30 rounded-xl p-4 flex flex-col items-center justify-center border border-zinc-800/30 min-h-[80px]">
+                                <div className="text-sm font-mono flex items-center gap-1 tracking-tighter">
+                                    <span className="text-zinc-500">τ</span>
+                                    <span className="text-zinc-300">V&apos; = -(V - </span>
+                                    <span className={cn("transition-colors", hoveredTerm === 'E_L' ? "text-cyan-400" : "text-cyan-600")}>E_L</span>
+                                    <span className="text-zinc-300">) + </span>
+                                    <span className={cn("transition-colors", hoveredTerm === 'R' ? "text-emerald-400" : "text-emerald-600")}>R</span>
+                                    <span className="text-zinc-300">· I(t)</span>
                                 </div>
-                                {/* Input Formula */}
-                                <div className="mt-4 text-center text-sm font-mono border-t border-zinc-800/50 pt-3 opacity-90">
+                                <div className="mt-2 text-[9px] font-mono text-amber-500/80 uppercase">
                                     {renderInputMath()}
                                 </div>
                             </div>
+                        </div>
 
-                            {/* 2. Force Balance */}
-                            <ForceBalance />
-
-                            {/* 3. Controls */}
-                            <div className="space-y-4 pt-2">
-                                <div className="flex items-center justify-between">
-                                    <h3 className="text-[10px] uppercase text-zinc-400 tracking-widest">Global Params</h3>
-                                    <div className="flex gap-1">
-                                        <Button
-                                            size="icon" variant="outline" className="h-6 w-6 border-zinc-800 bg-zinc-900"
-                                            onClick={() => setIsRunning(!isRunning)}
-                                        >
-                                            {isRunning ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3" />}
-                                        </Button>
-                                        <Button
-                                            size="icon" variant="outline" className="h-6 w-6 border-zinc-800 bg-zinc-900"
-                                            onClick={resetSimulation}
-                                        >
-                                            <RotateCcw className="h-3 w-3" />
-                                        </Button>
+                        {/* Sliders Area */}
+                        <div className="space-y-6 pt-2 overflow-y-auto pr-1 scrollbar-hide">
+                            <div className="space-y-4">
+                                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-600 font-mono">Biophysics</span>
+                                
+                                {/* Resistance */}
+                                <div className="space-y-3" onMouseEnter={() => setHoveredTerm('R')} onMouseLeave={() => setHoveredTerm(null)}>
+                                    <div className="flex justify-between items-center font-mono">
+                                        <span className="text-[10px] text-zinc-500 font-bold">Resistance (R)</span>
+                                        <span className="text-xs font-bold text-emerald-400">{params.R} MΩ</span>
                                     </div>
+                                    <Slider
+                                        min={1} max={100} step={1} value={[params.R]}
+                                        onValueChange={(val) => setParams({ R: val[0] })}
+                                        onPointerDown={onSliderChangeStart}
+                                        className="[&_[role=slider]]:bg-emerald-500"
+                                    />
                                 </div>
 
-                                {/* Global Sliders Grid */}
-                                <div className="grid grid-cols-2 gap-3">
-                                    {/* Resistance */}
-                                    <div
-                                        className={cn("col-span-1 space-y-2 p-2 rounded border border-zinc-800/50 bg-zinc-900/30", hoveredTerm === 'R' ? "border-emerald-500/30 bg-emerald-950/10" : "")}
-                                        onMouseEnter={() => setHoveredTerm('R')}
-                                        onMouseLeave={() => setHoveredTerm(null)}
-                                    >
-                                        <label className="flex justify-between text-[10px] text-zinc-400 uppercase">
-                                            <span>Resistance</span>
-                                            <span className={cn(hoveredTerm === 'R' ? "text-emerald-400" : "text-zinc-400")}>{params.R} MΩ</span>
-                                        </label>
-                                        <Slider
-                                            min={1} max={100} step={1}
-                                            value={[params.R]}
-                                            onValueChange={(val) => setParams({ R: val[0] })}
-                                            onPointerDown={onSliderChangeStart}
-                                        />
+                                {/* Leak */}
+                                <div className="space-y-3" onMouseEnter={() => setHoveredTerm('E_L')} onMouseLeave={() => setHoveredTerm(null)}>
+                                    <div className="flex justify-between items-center font-mono">
+                                        <span className="text-[10px] text-zinc-500 font-bold">Leak Pot. (E_L)</span>
+                                        <span className="text-xs font-bold text-cyan-400">{params.E_L} mV</span>
                                     </div>
-                                    {/* Leak Potential */}
-                                    <div
-                                        className={cn("col-span-1 space-y-2 p-2 rounded border border-zinc-800/50 bg-zinc-900/30", hoveredTerm === 'E_L' ? "border-cyan-500/30 bg-cyan-950/10" : "")}
-                                        onMouseEnter={() => setHoveredTerm('E_L')}
-                                        onMouseLeave={() => setHoveredTerm(null)}
-                                    >
-                                        <label className="flex justify-between text-[10px] text-zinc-400 uppercase">
-                                            <span>Leak Pot.</span>
-                                            <span className={cn(hoveredTerm === 'E_L' ? "text-cyan-400" : "text-zinc-400")}>{params.E_L} mV</span>
-                                        </label>
-                                        <Slider
-                                            min={-100} max={-40} step={1}
-                                            value={[params.E_L]}
-                                            onValueChange={(val) => setParams({ E_L: val[0] })}
-                                            onPointerDown={onSliderChangeStart}
-                                        />
-                                    </div>
-                                    {/* Capacitance */}
-                                    <div className="col-span-2 space-y-2 p-2 rounded border border-zinc-800/50 bg-zinc-900/30">
-                                        <label className="flex justify-between text-[10px] text-zinc-400 uppercase">
-                                            <span>Capacitance (C)</span>
-                                            <span>{params.C} μF</span>
-                                        </label>
-                                        <Slider
-                                            min={0.1} max={5} step={0.1}
-                                            value={[params.C]}
-                                            onValueChange={(val) => setParams({ C: val[0] })}
-                                            onPointerDown={onSliderChangeStart}
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="w-full h-px bg-zinc-900" />
-
-                                {/* Input Controls */}
-                                <div className="space-y-3">
-                                    <div className="flex items-center justify-between">
-                                        <label className="text-[10px] font-bold text-amber-500 uppercase tracking-widest">Input Stimulus</label>
-                                        <Select
-                                            value={params.inputMode}
-                                            onValueChange={(val: InputMode) => setParams({ inputMode: val })}
-                                        >
-                                            <SelectTrigger className="w-32 bg-zinc-900 border-zinc-800 h-6 text-[10px] focus:ring-0 focus:ring-offset-0">
-                                                <SelectValue placeholder="Mode" />
-                                            </SelectTrigger>
-                                            <SelectContent className="bg-zinc-900 border-zinc-800 text-zinc-200">
-                                                <SelectItem value="constant">Constant</SelectItem>
-                                                <SelectItem value="pulse">Pulse</SelectItem>
-                                                <SelectItem value="noise">Noise</SelectItem>
-                                                <SelectItem value="sine">Sine</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-
-                                    {/* DYNAMIC INPUT SLIDERS */}
-                                    <div
-                                        className={cn("space-y-3 p-3 rounded border border-zinc-800/50 bg-zinc-900/30 transition-colors duration-300",
-                                            (hoveredTerm === 'I' || hoveredTerm === 'Drive') ? "border-amber-500/30 bg-amber-950/10" : "")}
-                                        onMouseEnter={() => setHoveredTerm('I')}
-                                        onMouseLeave={() => setHoveredTerm(null)}
-                                    >
-                                        {/* CONSTANT */}
-                                        {params.inputMode === 'constant' && (
-                                            <div className="space-y-2">
-                                                <label className="flex justify-between text-[10px] text-amber-500 font-bold uppercase">
-                                                    <span>Current (I)</span>
-                                                    <span>{params.I} nA</span>
-                                                </label>
-                                                <Slider
-                                                    min={0} max={20} step={0.1} value={[params.I]}
-                                                    onValueChange={(val) => setParams({ I: val[0] })}
-                                                    onPointerDown={onSliderChangeStart}
-                                                />
-                                            </div>
-                                        )}
-
-                                        {/* PULSE MODE */}
-                                        {params.inputMode === 'pulse' && (
-                                            <div className="grid grid-cols-2 gap-3">
-                                                <div className="col-span-2 space-y-2">
-                                                    <label className="flex justify-between text-[10px] text-amber-500 font-bold uppercase">
-                                                        <span>Amplitude</span>
-                                                        <span>{params.pulseConfig.amplitude} nA</span>
-                                                    </label>
-                                                    <Slider
-                                                        min={0} max={50} step={1} value={[params.pulseConfig.amplitude]}
-                                                        onValueChange={(val) => updateConfig('pulse', { amplitude: val[0] })}
-                                                        onPointerDown={onSliderChangeStart}
-                                                    />
-                                                </div>
-                                                <div className="col-span-1 space-y-2">
-                                                    <label className="flex justify-between text-[10px] text-zinc-400">
-                                                        <span>Interval</span>
-                                                        <span>{params.pulseConfig.interval}ms</span>
-                                                    </label>
-                                                    <Slider
-                                                        min={10} max={200} step={5} value={[params.pulseConfig.interval]}
-                                                        onValueChange={(val) => updateConfig('pulse', { interval: val[0] })}
-                                                        onPointerDown={onSliderChangeStart}
-                                                    />
-                                                </div>
-                                                <div className="col-span-1 space-y-2">
-                                                    <label className="flex justify-between text-[10px] text-zinc-400">
-                                                        <span>Width</span>
-                                                        <span>{params.pulseConfig.width}ms</span>
-                                                    </label>
-                                                    <Slider
-                                                        min={1} max={20} step={1} value={[params.pulseConfig.width]}
-                                                        onValueChange={(val) => updateConfig('pulse', { width: val[0] })}
-                                                        onPointerDown={onSliderChangeStart}
-                                                    />
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {/* NOISE MODE */}
-                                        {params.inputMode === 'noise' && (
-                                            <div className="grid grid-cols-2 gap-3">
-                                                <div className="col-span-1 space-y-2">
-                                                    <label className="flex justify-between text-[10px] text-amber-500 font-bold uppercase">
-                                                        <span>Mean</span>
-                                                        <span>{params.noiseConfig.mean} nA</span>
-                                                    </label>
-                                                    <Slider
-                                                        min={0} max={20} step={0.5} value={[params.noiseConfig.mean]}
-                                                        onValueChange={(val) => updateConfig('noise', { mean: val[0] })}
-                                                        onPointerDown={onSliderChangeStart}
-                                                    />
-                                                </div>
-                                                <div className="col-span-1 space-y-2">
-                                                    <label className="flex justify-between text-[10px] text-zinc-400">
-                                                        <span>Sigma</span>
-                                                        <span>{params.noiseConfig.sigma}</span>
-                                                    </label>
-                                                    <Slider
-                                                        min={0} max={10} step={0.1} value={[params.noiseConfig.sigma]}
-                                                        onValueChange={(val) => updateConfig('noise', { sigma: val[0] })}
-                                                        onPointerDown={onSliderChangeStart}
-                                                    />
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {/* SINE MODE */}
-                                        {params.inputMode === 'sine' && (
-                                            <div className="grid grid-cols-2 gap-3">
-                                                <div className="col-span-1 space-y-2">
-                                                    <label className="flex justify-between text-[10px] text-amber-500 font-bold uppercase">
-                                                        <span>Amp</span>
-                                                        <span>{params.sineConfig.amplitude} nA</span>
-                                                    </label>
-                                                    <Slider
-                                                        min={0} max={30} step={1} value={[params.sineConfig.amplitude]}
-                                                        onValueChange={(val) => updateConfig('sine', { amplitude: val[0] })}
-                                                        onPointerDown={onSliderChangeStart}
-                                                    />
-                                                </div>
-                                                <div className="col-span-1 space-y-2">
-                                                    <label className="flex justify-between text-[10px] text-zinc-400">
-                                                        <span>Freq</span>
-                                                        <span>{params.sineConfig.frequency} Hz</span>
-                                                    </label>
-                                                    <Slider
-                                                        min={1} max={50} step={1} value={[params.sineConfig.frequency]}
-                                                        onValueChange={(val) => updateConfig('sine', { frequency: val[0] })}
-                                                        onPointerDown={onSliderChangeStart}
-                                                    />
-                                                </div>
-                                            </div>
-                                        )}
-
-                                    </div>
+                                    <Slider
+                                        min={-100} max={-40} step={1} value={[params.E_L]}
+                                        onValueChange={(val) => setParams({ E_L: val[0] })}
+                                        onPointerDown={onSliderChangeStart}
+                                        className="[&_[role=slider]]:bg-cyan-500"
+                                    />
                                 </div>
                             </div>
 
-                            {/* Footer/Ghost Controls */}
-                            {ghostTrace && (
-                                <div className="pt-2 text-center">
-                                    <Button variant="ghost" size="sm" onClick={clearGhostTrace} className="text-[10px] h-6 text-zinc-500 hover:text-red-400 hover:bg-zinc-900 border border-transparent hover:border-zinc-800">
-                                        Clear Ghost Trace
-                                    </Button>
+                            {/* Input Stimulus Card */}
+                            <div className="pt-6 border-t border-zinc-800/50 space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-600 font-mono">Stimulus</span>
+                                    <Select value={params.inputMode} onValueChange={(val: InputMode) => setParams({ inputMode: val })}>
+                                        <SelectTrigger className="w-24 h-6 bg-zinc-950 border-zinc-800 text-[9px] font-mono text-zinc-400">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent className="bg-zinc-900 border-zinc-800 text-zinc-300">
+                                            <SelectItem value="constant">Constant</SelectItem>
+                                            <SelectItem value="pulse">Pulse</SelectItem>
+                                            <SelectItem value="noise">Noise</SelectItem>
+                                            <SelectItem value="sine">Sine</SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                 </div>
-                            )}
+
+                                {/* Dynamic Input Slider */}
+                                <div className="p-3 rounded-xl bg-amber-500/5 border border-amber-500/10 space-y-3">
+                                    <div className="flex justify-between items-center font-mono">
+                                        <span className="text-[9px] text-amber-500/70 font-bold">Amplitude</span>
+                                        <span className="text-xs font-bold text-amber-500">{params.I} nA</span>
+                                    </div>
+                                    <Slider
+                                        min={0} max={20} step={0.1} value={[params.I]}
+                                        onValueChange={(val) => setParams({ I: val[0] })}
+                                        className="[&_[role=slider]]:bg-amber-500"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Force Balance Viz integration */}
+                        <div className="pt-2">
+                             <ForceBalance />
                         </div>
                     </div>
+                </aside>
 
-                    {/* RIGHT COLUMN: Oscilloscope */}
-                    <div className="col-span-8 lg:col-span-9 flex flex-col bg-zinc-950 relative overflow-hidden">
-                        {/* Chart Header */}
-                        <div className="absolute top-4 left-6 z-10 pointer-events-none select-none">
-                            <div className="flex flex-col">
-                                <span className="text-4xl font-bold text-emerald-500/20 font-mono tracking-tighter">
-                                    {params.inputMode.toUpperCase()}
-                                </span>
-                                <span className="text-[10px] text-zinc-600 uppercase tracking-widest mt-1 ml-1">
-                                    Live Simulation | T: {useSimulationStore.getState().currentTime.toFixed(0)}ms
-                                </span>
-                            </div>
+                {/* Right Panel: Oscilloscope Workstation */}
+                <section className="flex-1 min-w-0 bg-zinc-900/30 border border-zinc-800 rounded-2xl overflow-hidden flex flex-col relative shadow-inner">
+                    
+                    {/* Ghost Controls Overlay */}
+                    {ghostTrace && (
+                        <div className="absolute top-4 right-4 z-20">
+                            <Button 
+                                variant="outline" size="sm" onClick={clearGhostTrace} 
+                                className="text-[9px] h-6 border-zinc-800 bg-zinc-950/50 text-zinc-500 hover:text-rose-400 font-mono"
+                            >
+                                Clear Ghost Trace
+                            </Button>
                         </div>
+                    )}
 
-                        <div className="absolute top-4 right-4 z-10 flex gap-4 pointer-events-none">
-                            <div className="flex items-center gap-2 bg-zinc-900/50 p-1 px-2 rounded border border-zinc-800/50">
-                                <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-                                <span className="text-[10px] text-zinc-400 font-mono">Live V_m</span>
-                            </div>
-                            {ghostTrace && (
-                                <div className="flex items-center gap-2 bg-zinc-900/50 p-1 px-2 rounded border border-zinc-800/50">
-                                    <div className="w-2 h-2 rounded-full bg-zinc-600" />
-                                    <span className="text-[10px] text-zinc-500 font-mono">Ghost</span>
-                                </div>
-                            )}
-                        </div>
-
+                    <div className="flex-1 relative p-4">
                         <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={history} margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} horizontal={true} />
-                                <XAxis
-                                    dataKey="time"
-                                    type="number"
-                                    domain={['dataMin', 'dataMax']}
-                                    hide={true}
-                                    interval="preserveStartEnd"
-                                />
-                                <YAxis
-                                    domain={[-90, -30]}
-                                    hide={true}
-                                />
+                            <LineChart data={history} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
+                                <XAxis dataKey="time" type="number" domain={['dataMin', 'dataMax']} hide />
+                                <YAxis domain={[-90, -30]} hide />
+                                <Tooltip content={<CustomTooltip />} isAnimationActive={false} />
+                                
+                                <ReferenceLine y={params.thresh} stroke="#dc2626" strokeDasharray="3 3" strokeOpacity={0.5} />
+                                <ReferenceLine y={params.E_L} stroke="#0ea5e9" strokeDasharray="3 3" strokeOpacity={0.3} />
 
-                                <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#3f3f46', strokeWidth: 1 }} />
-
-                                <ReferenceLine y={params.thresh} stroke="#dc2626" strokeDasharray="3 3" strokeOpacity={0.5} label={{ position: 'insideRight', value: 'THRESHOLD', fill: '#dc2626', fontSize: 10, opacity: 0.7 }} />
-                                <ReferenceLine y={params.E_L} stroke="#0ea5e9" strokeDasharray="3 3" strokeOpacity={0.3} label={{ position: 'insideRight', value: 'REST', fill: '#0ea5e9', fontSize: 10, opacity: 0.5 }} />
-
-                                {/* Ghost Trace */}
                                 {ghostTrace && (
                                     <Line
-                                        data={ghostTrace}
-                                        type="monotone"
-                                        dataKey="voltage"
-                                        stroke="#52525b"
-                                        strokeWidth={2}
-                                        dot={false}
-                                        isAnimationActive={false}
+                                        data={ghostTrace} type="monotone" dataKey="voltage"
+                                        stroke="#3f3f46" strokeWidth={1.5} dot={false} isAnimationActive={false}
                                     />
                                 )}
 
                                 <Line
-                                    type="monotone"
-                                    dataKey="voltage"
-                                    stroke="#10b981"
-                                    strokeWidth={2}
-                                    dot={false}
-                                    isAnimationActive={false}
+                                    type="monotone" dataKey="voltage" stroke="#10b981"
+                                    strokeWidth={2} dot={false} isAnimationActive={false}
                                 />
                             </LineChart>
                         </ResponsiveContainer>
                     </div>
 
-                </main>
-            </div>
+                    {/* Workstation Footer */}
+                    <div className="p-4 px-10 border-t border-zinc-800/50 flex justify-between items-center bg-zinc-950/50">
+                        <div className="flex items-center gap-3">
+                            <div className={cn("w-2 h-2 rounded-full", isRunning ? "bg-emerald-500 animate-pulse" : "bg-zinc-600")} />
+                            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 font-mono tracking-tight">
+                                Telemetry: {isRunning ? 'Streaming' : 'Idle'} // DT: 0.1ms
+                            </span>
+                        </div>
+                        <div className="flex gap-6">
+                            <span className="text-[10px] text-zinc-700 uppercase tracking-widest font-mono">Mode: {params.inputMode}</span>
+                            <span className="text-[10px] text-zinc-700 uppercase tracking-widest font-mono">Engine: LIF_INTEGRATOR_V2</span>
+                        </div>
+                    </div>
+                </section>
+            </main>
         </div>
     );
 }
