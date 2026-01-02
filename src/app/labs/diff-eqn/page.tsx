@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react"; // Added useCallback
 import Link from 'next/link';
 import { Slider } from "@/components/ui/slider";
-import { Activity, FunctionSquare, Compass } from "lucide-react";
+import { FunctionSquare, Compass } from "lucide-react"; // Removed Activity
 import {
     Select,
     SelectContent,
@@ -26,28 +26,27 @@ export default function PhasePlanePage() {
     const [mousePos, setMousePos] = useState<{ x: number, y: number } | null>(null);
     const [liveState, setLiveState] = useState<{ x: number, y: number, dx: number, dy: number } | null>(null);
 
-    // FHN Constants (Spike)
     const a = 0.7;
     const b = 0.8;
     const tau = 0.08;
 
-    const getDerivatives = (x: number, y: number, p: number, m: Mode) => {
+    // Fixed: Wrapped in useCallback to satisfy useEffect dependency
+    const getDerivatives = useCallback((x: number, y: number, p: number, m: Mode) => {
         if (m === 'leak') {
             return { dx: -x + p, dy: -y };
         } else if (m === 'resonator') {
             const damping = Math.max(0, p);
             return { dx: y, dy: -x - damping * y };
         } else {
-            // 'spike' & 'math' (FHN)
             return {
                 dx: x - (x * x * x) / 3 - y + p,
                 dy: tau * (x + a - b * y)
             };
         }
-    };
+    }, [a, b, tau]);
 
-    // RK4 Integration for high-quality trajectories
-    const rk4Step = (x: number, y: number, p: number, m: Mode, dt: number) => {
+    // Fixed: Wrapped in useCallback
+    const rk4Step = useCallback((x: number, y: number, p: number, m: Mode, dt: number) => {
         const k1 = getDerivatives(x, y, p, m);
         const k2 = getDerivatives(x + k1.dx * dt / 2, y + k1.dy * dt / 2, p, m);
         const k3 = getDerivatives(x + k2.dx * dt / 2, y + k2.dy * dt / 2, p, m);
@@ -56,7 +55,7 @@ export default function PhasePlanePage() {
             x: x + (dt / 6) * (k1.dx + 2 * k2.dx + 2 * k3.dx + k4.dx),
             y: y + (dt / 6) * (k1.dy + 2 * k2.dy + 2 * k3.dy + k4.dy)
         };
-    };
+    }, [getDerivatives]);
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -64,7 +63,6 @@ export default function PhasePlanePage() {
         const ctx = canvas.getContext("2d", { alpha: false });
         if (!ctx) return;
 
-        // High-DPI Scaling logic
         const dpr = window.devicePixelRatio || 1;
         const rect = canvas.getBoundingClientRect();
         canvas.width = rect.width * dpr;
@@ -73,7 +71,7 @@ export default function PhasePlanePage() {
 
         const width = rect.width;
         const height = rect.height;
-        const scale = 80; // Adjusted zoom
+        const scale = 80;
         const offset = { x: width / 2, y: height / 2 };
 
         const toCanvas = (x: number, y: number) => ({
@@ -89,7 +87,7 @@ export default function PhasePlanePage() {
         ctx.fillStyle = "#09090b";
         ctx.fillRect(0, 0, width, height);
 
-        // Draw Vector Field
+        // Fixed Error 150:17: Replaced ternary expression with proper conditional logic
         ctx.strokeStyle = "rgba(113, 113, 122, 0.25)";
         ctx.lineWidth = 1;
         for (let x = -6; x <= 6; x += 0.5) {
@@ -111,17 +109,15 @@ export default function PhasePlanePage() {
             }
         }
 
-        // Draw Nullclines with high quality
         ctx.lineWidth = 2.5;
         if (mode === 'leak') {
-            ctx.strokeStyle = "#10b981"; // V-nullcline
+            ctx.strokeStyle = "#10b981";
             ctx.beginPath();
-            const xLine = toCanvas(paramI, -4);
-            ctx.moveTo(xLine.x, toCanvas(paramI, -4).y);
-            ctx.lineTo(xLine.x, toCanvas(paramI, 4).y);
+            ctx.moveTo(toCanvas(paramI, -4).x, toCanvas(paramI, -4).y);
+            ctx.lineTo(toCanvas(paramI, 4).x, toCanvas(paramI, 4).y);
             ctx.stroke();
 
-            ctx.strokeStyle = "#f59e0b"; // y-nullcline
+            ctx.strokeStyle = "#f59e0b";
             ctx.beginPath();
             ctx.moveTo(toCanvas(-6, 0).x, toCanvas(-6, 0).y);
             ctx.lineTo(toCanvas(6, 0).x, toCanvas(6, 0).y);
@@ -136,30 +132,27 @@ export default function PhasePlanePage() {
             ctx.strokeStyle = "#f59e0b";
             ctx.beginPath();
             const d = Math.max(0.01, paramI);
-            const s = toCanvas(-4, 4 / d);
-            const e = toCanvas(4, -4 / d);
-            ctx.moveTo(s.x, s.y); ctx.lineTo(e.x, e.y);
+            ctx.moveTo(toCanvas(-4, 4 / d).x, toCanvas(-4, 4 / d).y);
+            ctx.lineTo(toCanvas(4, -4 / d).x, toCanvas(4, -4 / d).y);
             ctx.stroke();
         } else {
-            // FHN Curves
             ctx.strokeStyle = "#10b981";
             ctx.beginPath();
             for (let v = -4; v <= 4; v += 0.05) {
                 const w = v - (v * v * v) / 3 + paramI;
                 const p = toCanvas(v, w);
-                v === -4 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
+                if (v === -4) ctx.moveTo(p.x, p.y);
+                else ctx.lineTo(p.x, p.y);
             }
             ctx.stroke();
 
             ctx.strokeStyle = "#f59e0b";
             ctx.beginPath();
-            const s = toCanvas(-4, (-4 + a) / b);
-            const e = toCanvas(4, (4 + a) / b);
-            ctx.moveTo(s.x, s.y); ctx.lineTo(e.x, e.y);
+            ctx.moveTo(toCanvas(-4, (-4 + a) / b).x, toCanvas(-4, (-4 + a) / b).y);
+            ctx.lineTo(toCanvas(4, (4 + a) / b).x, toCanvas(4, (4 + a) / b).y);
             ctx.stroke();
         }
 
-        // Trajectory on Mouse Hover
         if (mousePos) {
             const start = fromCanvas(mousePos.x, mousePos.y);
             const { dx, dy } = getDerivatives(start.x, start.y, paramI, mode);
@@ -182,7 +175,7 @@ export default function PhasePlanePage() {
             ctx.setLineDash([]);
         }
 
-    }, [paramI, mousePos, mode]);
+    }, [paramI, mousePos, mode, getDerivatives, rk4Step, a, b]); // Included useCallback hooks as dependencies
 
     const handleMouseMove = (e: React.MouseEvent) => {
         const canvas = canvasRef.current;
@@ -256,7 +249,6 @@ export default function PhasePlanePage() {
             </header>
 
             <main className="flex-1 flex overflow-hidden p-8 gap-8">
-                {/* Control Panel */}
                 <aside className="w-80 flex flex-col gap-6 shrink-0">
                     <div className="bg-zinc-900/50 border border-zinc-800 p-6 rounded-2xl space-y-8 flex flex-col shadow-sm">
                         <div className="space-y-4">
@@ -303,7 +295,6 @@ export default function PhasePlanePage() {
                     </div>
                 </aside>
 
-                {/* Simulation Canvas */}
                 <section className="flex-1 min-w-0 bg-zinc-900/30 border border-zinc-800 rounded-2xl overflow-hidden flex flex-col relative shadow-inner">
                     <div className="flex-1 relative cursor-crosshair">
                         <canvas
@@ -313,7 +304,6 @@ export default function PhasePlanePage() {
                             className="w-full h-full"
                         />
                         
-                        {/* Static Overlay Labels */}
                         <div className="absolute bottom-4 right-6 text-xs font-bold text-zinc-600 font-mono">
                             {labels.xAxis} axis
                         </div>
