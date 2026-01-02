@@ -1,11 +1,11 @@
 import React from 'react';
 import { InlineMath, BlockMath } from 'react-katex';
 
-type Mode = 'math' | 'neuro';
+type Mode = 'math' | 'neuron';
 
 export const getLinearContent = (mode: Mode) => {
     switch (mode) {
-        case 'neuro': // Neuroscience Context
+        case 'neuron':
             return {
                 title: "Synaptic Integration",
                 subtitle: "The Dendritic Tree",
