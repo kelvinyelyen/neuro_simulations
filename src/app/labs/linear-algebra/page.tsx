@@ -190,7 +190,7 @@ export default function LinearAlgebraPage() {
                                     />
                                 </div>
                                 <span className="text-[10px] font-mono text-zinc-500 font-bold uppercase tracking-widest text-center">
-                                    {mode === 'neuro' ? <InlineMath math="I_{\text{sum}}" /> : <InlineMath math="y" />}
+                                    {mode === 'neuron' ? <InlineMath math="I_{\text{sum}}" /> : <InlineMath math="y" />}
                                 </span>
                             </div>
                         </div>
