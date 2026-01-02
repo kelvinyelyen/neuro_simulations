@@ -1,7 +1,7 @@
 import React from 'react';
 import { InlineMath, BlockMath } from 'react-katex';
 
-type Mode = 'math' | 'leak' | 'resonator' | 'spike';
+type Mode = 'leak' | 'time-constant' | 'fixed-points' | 'spike';
 
 export const getPhaseContent = (mode: Mode) => {
     switch (mode) {
