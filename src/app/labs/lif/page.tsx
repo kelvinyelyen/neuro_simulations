@@ -195,7 +195,7 @@ export default function LifLab() {
 
               {/* 2. Membrane Group - Compact Grid */}
               <div className="space-y-4 pt-6 mt-6 border-t border-zinc-800/50">
-                  <div className="space-y-1">
+                  <div className="space-y-2">
                     <div className="flex items-center gap-2">
                         <Settings2 className="w-3.5 h-3.5 text-zinc-600" />
                         <span className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-600 font-mono">Membrane Properties</span>
