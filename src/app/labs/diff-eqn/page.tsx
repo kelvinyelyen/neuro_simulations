@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from 'next/link';
 import { Slider } from "@/components/ui/slider";
-import { FunctionSquare, Compass, Timer, Anchor } from "lucide-react";
+import { FunctionSquare, Compass, Timer, Anchor, Activity } from "lucide-react";
 import {
     Select,
     SelectContent,
@@ -17,7 +17,7 @@ import { getPhaseContent } from './content';
 import { InlineMath, BlockMath } from 'react-katex';
 import 'katex/dist/katex.min.css';
 
-// Updated to match your "Whitebox" Phase 2 Roadmap
+// Strict Mode definition as requested
 type Mode = 'leak' | 'time-constant' | 'fixed-points' | 'spike';
 
 export default function PhasePlanePage() {
@@ -33,28 +33,23 @@ export default function PhasePlanePage() {
     const a = 0.7;
     const b = 0.8;
 
-    // The Physics Engine: Updated with explicit Tau and Leak dynamics
+    // The Physics Engine
     const getDerivatives = useCallback((x: number, y: number, p: number, m: Mode, t: number) => {
         switch (m) {
             case 'leak':
                 // 1st Order ODE: dV/dt = -(V - I)
-                // A simple decay toward the input I
                 return { dx: -(x - p), dy: -y }; 
             
             case 'time-constant':
                 // Visualizing Memory: dV/dt = (-V + I) / tau
-                // t (tau) scales the speed of the vector
                 return { dx: (-(x - p)) / t, dy: -y / t };
 
             case 'fixed-points':
-                // 2D Linear System for stability analysis
-                // Fixed point is at (0,0) usually, shifted here by p
+                // 2D Linear System (Stable Sink shifted by p)
                 return { dx: y, dy: -x - (0.5 * y) + p };
 
             case 'spike':
                 // FitzHugh-Nagumo
-                // Tau is usually small for V (fast) and large for w (slow)
-                // Here we simplify: dy is scaled by a small factor to make it slow
                 return {
                     dx: x - (x * x * x) / 3 - y + p,
                     dy: 0.08 * (x + a - b * y) 
@@ -111,11 +106,10 @@ export default function PhasePlanePage() {
             for (let y = -4; y <= 4; y += 0.5) {
                 const { dx, dy } = getDerivatives(x, y, paramI, mode, tau);
                 const speed = Math.sqrt(dx * dx + dy * dy);
-                const arrowScale = 0.25 / (speed + 0.5); // Adjusted for visibility
+                const arrowScale = 0.25 / (speed + 0.5); 
                 const start = toCanvas(x, y);
                 const end = toCanvas(x + dx * arrowScale, y + dy * arrowScale);
 
-                // Dynamic coloring based on speed (Heatmap style)
                 const opacity = Math.min(0.8, speed * 0.3 + 0.1);
                 ctx.strokeStyle = `rgba(113, 113, 122, ${opacity})`;
 
@@ -124,7 +118,6 @@ export default function PhasePlanePage() {
                 ctx.lineTo(end.x, end.y);
                 ctx.stroke();
                 
-                // Arrowhead dot
                 ctx.beginPath();
                 ctx.arc(end.x, end.y, 1, 0, Math.PI * 2);
                 ctx.fillStyle = `rgba(113, 113, 122, ${opacity + 0.2})`;
@@ -136,9 +129,7 @@ export default function PhasePlanePage() {
         ctx.lineWidth = 2.5;
 
         if (mode === 'leak' || mode === 'time-constant') {
-            // The Leak: Target V = I
-            // Draw a vertical line representing the "Goal" voltage
-            ctx.strokeStyle = "#10b981"; // Green
+            ctx.strokeStyle = "#10b981"; 
             ctx.setLineDash([5, 5]);
             ctx.beginPath();
             const xTarget = toCanvas(paramI, 0).x;
@@ -147,27 +138,23 @@ export default function PhasePlanePage() {
             ctx.stroke();
             ctx.setLineDash([]);
 
-            // Draw Fixed Point (Sink)
             const sink = toCanvas(paramI, 0);
             ctx.fillStyle = "#10b981";
             ctx.beginPath();
             ctx.arc(sink.x, sink.y, 8, 0, Math.PI * 2);
             ctx.fill();
-            // Glow effect
             ctx.fillStyle = "rgba(16, 185, 129, 0.2)";
             ctx.beginPath();
             ctx.arc(sink.x, sink.y, 16, 0, Math.PI * 2);
             ctx.fill();
 
         } else if (mode === 'fixed-points') {
-            // Show simple intersection
              ctx.strokeStyle = "#3b82f6";
              ctx.beginPath();
              ctx.moveTo(toCanvas(-6, 0).x, toCanvas(-6, 0).y);
              ctx.lineTo(toCanvas(6, 0).x, toCanvas(6, 0).y);
              ctx.stroke();
         } else if (mode === 'spike') {
-            // Cubic Nullcline (V-nullcline)
             ctx.strokeStyle = "#10b981";
             ctx.beginPath();
             for (let v = -4; v <= 4; v += 0.05) {
@@ -178,8 +165,7 @@ export default function PhasePlanePage() {
             }
             ctx.stroke();
 
-            // Linear Nullcline (w-nullcline)
-            ctx.strokeStyle = "#f59e0b"; // Amber
+            ctx.strokeStyle = "#f59e0b";
             ctx.beginPath();
             ctx.moveTo(toCanvas(-4, (-4 + a) / b).x, toCanvas(-4, (-4 + a) / b).y);
             ctx.lineTo(toCanvas(4, (4 + a) / b).x, toCanvas(4, (4 + a) / b).y);
@@ -199,15 +185,16 @@ export default function PhasePlanePage() {
             let cur = { ...start };
             ctx.moveTo(mousePos.x, mousePos.y);
             
-            // Integrate forward
             for (let i = 0; i < 500; i++) {
-                cur = rk4Step(cur.x, cur.y, paramI, mode, tau, 0.03); // Fixed dt for drawing
+                cur = rk4Step(cur.x, cur.y, paramI, mode, tau, 0.03);
                 const p = toCanvas(cur.x, cur.y);
                 ctx.lineTo(p.x, p.y);
                 if (p.x < 0 || p.x > width || p.y < 0 || p.y > height) break;
             }
             ctx.stroke();
             ctx.setLineDash([]);
+        } else {
+            setLiveState(null);
         }
 
     }, [paramI, tau, mousePos, mode, getDerivatives, rk4Step, a, b]);
@@ -312,7 +299,7 @@ export default function PhasePlanePage() {
                             <p className="text-xs text-zinc-500 leading-relaxed italic">{labels.desc}</p>
                         </div>
 
-                        {/* Time Constant Slider - Only visible in relevant modes */}
+                        {/* Time Constant Slider */}
                         {(mode === 'time-constant' || mode === 'leak') && (
                             <div className="space-y-4 pt-4 border-t border-zinc-800/50 animate-in fade-in slide-in-from-top-2">
                                 <div className="flex justify-between items-center">
@@ -330,28 +317,8 @@ export default function PhasePlanePage() {
                                 <p className="text-[10px] text-zinc-500 italic">Controls the &quot;sluggishness&quot; of the system.</p>
                             </div>
                         )}
-
-                        <div className="pt-6 border-t border-zinc-800/50 space-y-3">
-                            <div className="flex items-center gap-2">
-                                <Anchor className="w-3.5 h-3.5 text-zinc-600" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-600 font-mono">Trajectory Probe</span>
-                            </div>
-                            <div className="text-sm font-bold font-mono text-white bg-zinc-950 p-4 rounded-xl border border-zinc-800 flex flex-col gap-2">
-                                {liveState ? (
-                                    <>
-                                        <div className="flex justify-between opacity-60 text-[10px]">
-                                            <span>POS: ({liveState.x.toFixed(2)}, {liveState.y.toFixed(2)})</span>
-                                            <span className="animate-pulse text-emerald-500 uppercase">Active</span>
-                                        </div>
-                                        <div className="text-center pt-2 border-t border-zinc-800">
-                                            <InlineMath math={`\\dot{\\vec{x}} = [${liveState.dx.toFixed(2)}, ${liveState.dy.toFixed(2)}]`} />
-                                        </div>
-                                    </>
-                                ) : (
-                                    <div className="text-zinc-600 text-center py-2 italic text-xs">Hover canvas to probe...</div>
-                                )}
-                            </div>
-                        </div>
+                        
+                        {/* Note: Trajectory Probe removed from here */}
                     </div>
                 </aside>
 
@@ -363,10 +330,37 @@ export default function PhasePlanePage() {
                             onMouseLeave={() => setMousePos(null)}
                             className="w-full h-full"
                         />
-                        <div className="absolute bottom-4 right-6 text-xs font-bold text-zinc-600 font-mono">
+                        
+                        {/* FLOATING PROBE HUD - Top Right Corner */}
+                        <div className="absolute top-4 right-4 pointer-events-none">
+                            <div className={cn(
+                                "backdrop-blur-md bg-zinc-950/80 border border-zinc-800/50 p-3 rounded-lg shadow-2xl transition-all duration-200",
+                                liveState ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
+                            )}>
+                                <div className="flex items-center gap-2 mb-2 border-b border-zinc-800/50 pb-2">
+                                    <Anchor className="w-3 h-3 text-emerald-500" />
+                                    <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 font-mono">Probe</span>
+                                </div>
+                                {liveState && (
+                                    <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs font-mono">
+                                        <div className="text-zinc-500">x (V):</div>
+                                        <div className="text-zinc-200 text-right">{liveState.x.toFixed(2)}</div>
+                                        
+                                        <div className="text-zinc-500">y (w):</div>
+                                        <div className="text-zinc-200 text-right">{liveState.y.toFixed(2)}</div>
+                                        
+                                        <div className="col-span-2 pt-2 mt-1 border-t border-zinc-800/50 text-center text-zinc-400">
+                                            <InlineMath math={`\\dot{\\vec{x}} = [${liveState.dx.toFixed(2)}, ${liveState.dy.toFixed(2)}]`} />
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="absolute bottom-4 right-6 text-xs font-bold text-zinc-600 font-mono pointer-events-none">
                             {labels.xAxis} axis
                         </div>
-                        <div className="absolute top-6 left-1/2 -translate-x-1/2 text-xs font-bold text-zinc-600 font-mono">
+                        <div className="absolute top-6 left-1/2 -translate-x-1/2 text-xs font-bold text-zinc-600 font-mono pointer-events-none">
                             {labels.yAxis} axis
                         </div>
                     </div>
