@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from 'next/link';
 import { Slider } from "@/components/ui/slider";
-import { FunctionSquare, Compass, Timer, Anchor, Activity } from "lucide-react";
+import { FunctionSquare, Compass, Timer, Anchor } from "lucide-react";
 import {
     Select,
     SelectContent,
@@ -259,11 +259,11 @@ export default function PhasePlanePage() {
                         <SelectTrigger className="w-[180px] h-9 bg-zinc-900 border-zinc-800 text-sm text-zinc-200 font-mono focus:ring-0">
                             <SelectValue placeholder="Select Lab" />
                         </SelectTrigger>
-                        <SelectContent className="bg-zinc-900 border-zinc-800">
-                            <SelectItem value="leak">1. The Leak</SelectItem>
-                            <SelectItem value="time-constant">2. Time Constant (τ)</SelectItem>
-                            <SelectItem value="fixed-points">3. Fixed Points</SelectItem>
-                            <SelectItem value="spike">4. Phase Plane</SelectItem>
+                        <SelectContent className="bg-zinc-900 border-zinc-800 text-zinc-200">
+                            <SelectItem value="leak">The Leak</SelectItem>
+                            <SelectItem value="time-constant">Time Constant (τ)</SelectItem>
+                            <SelectItem value="fixed-points">Fixed Points</SelectItem>
+                            <SelectItem value="spike">Phase Plane</SelectItem>
                         </SelectContent>
                     </Select>
                     <ConceptDialog {...content} />
