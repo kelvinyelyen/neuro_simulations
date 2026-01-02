@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from 'next/link';
 import { Slider } from "@/components/ui/slider";
-import { Activity, FunctionSquare, Info } from "lucide-react";
+import { Activity, FunctionSquare } from "lucide-react";
 import {
     Select,
     SelectContent,
