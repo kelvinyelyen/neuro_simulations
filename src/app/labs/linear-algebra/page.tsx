@@ -116,17 +116,6 @@ export default function LinearAlgebraPage() {
                                             ? "Summing synaptic inputs at the soma to determine the total membrane current." 
                                             : "Calculating the algebraic similarity between two vectors through element-wise multiplication."}
                                     </p>
-                                    {/* Dynamic Net Result Description */}
-                                    <div className="p-3 rounded-lg bg-zinc-950/50 border border-zinc-800/50">
-                                        <p className={cn(
-                                            "text-[11px] font-medium leading-tight",
-                                            dotProduct < 0 ? "text-rose-400/90" : "text-emerald-400/90"
-                                        )}>
-                                            {mode === 'neuron' 
-                                                ? (dotProduct > 0.5 ? "Status: Threshold reached. The neuron is likely to fire an action potential." : "Status: Sub-threshold. Signal is too weak to trigger a spike.")
-                                                : `Magnitude: ${dotProduct.toFixed(2)}. This represents the scale of the projection on the weight vector.`}
-                                        </p>
-                                    </div>
                                 </div>
                             </div>
 
@@ -173,6 +162,17 @@ export default function LinearAlgebraPage() {
                                         </div>
                                     ))}
                                 </div>
+                            </div>
+                             {/* Dynamic Net Result Description */}
+                            <div className="p-3 rounded-lg bg-zinc-950/50 border border-zinc-800/50">
+                                <p className={cn(
+                                    "text-[11px] font-medium leading-tight",
+                                        dotProduct < 0 ? "text-rose-400/90" : "text-emerald-400/90"
+                                    )}>
+                                    {mode === 'neuron' 
+                                        ? (dotProduct > 0.5 ? "Status: Threshold reached. The neuron is likely to fire an action potential." : "Status: Sub-threshold. Signal is too weak to trigger a spike.")
+                                        : `Magnitude: ${dotProduct.toFixed(2)}. This represents the scale of the projection on the weight vector.`}
+                                </p>
                             </div>
                         </div>
                     </aside>
