@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { Play, Pause, RotateCcw, Activity, FunctionSquare, Info, Timer, Zap } from 'lucide-react';
+import { Play, Pause, RotateCcw, Activity, FunctionSquare, Info, Timer, Zap, Settings2 } from 'lucide-react';
 import {
   LineChart,
   Line,
@@ -72,7 +72,7 @@ export default function LifLab() {
   const animate = useCallback(() => {
     if (isRunning) {
       step();
-      step(); // 2x speed for fluidity
+      step();
     }
     requestRef.current = requestAnimationFrame(animate);
   }, [isRunning, step]);
@@ -101,10 +101,10 @@ export default function LifLab() {
   // Helper for mode descriptions
   const getModeDescription = () => {
     switch (params.inputMode) {
-        case 'constant': return "Injecting a steady DC current. If I > Threshold, the neuron fires regularly.";
-        case 'pulse': return "Delivering brief, high-amplitude current spikes. Tests temporal integration.";
-        case 'noise': return "Simulating synaptic bombardment with random fluctuations (White Noise).";
-        case 'sine': return "Injecting oscillating current. Explores resonance and frequency response.";
+        case 'constant': return "Steady DC current injection.";
+        case 'pulse': return "Brief, high-amplitude current spikes.";
+        case 'noise': return "Random synaptic fluctuations (White Noise).";
+        case 'sine': return "Oscillating current to test resonance.";
         default: return "";
     }
   };
@@ -157,10 +157,10 @@ export default function LifLab() {
         <main className="flex-1 flex overflow-hidden p-8 gap-8">
           {/* Left Panel: Sidebar - Entirely Scrollable */}
           <aside className="w-96 flex flex-col shrink-0 overflow-hidden bg-zinc-900/50 border border-zinc-800 rounded-2xl shadow-sm">
-            <div className="h-full overflow-y-auto [&::-webkit-scrollbar]:hidden p-6 space-y-8">
+            <div className="h-full overflow-y-auto [&::-webkit-scrollbar]:hidden p-6 flex flex-col">
               
               {/* 1. Equation & Visualizer */}
-              <div className="space-y-4">
+              <div className="space-y-4 shrink-0">
                 <div className="flex items-center gap-2">
                   <FunctionSquare className="w-3.5 h-3.5 text-zinc-600" />
                   <span className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-600 font-mono">Governing Equation</span>
@@ -174,131 +174,150 @@ export default function LifLab() {
                   </div>
                 </div>
                 
-                {/* Contextual Description */}
-                <p className="text-[11px] text-zinc-500 leading-relaxed italic border-l-2 border-zinc-800 pl-3">
-                    {getModeDescription()}
-                </p>
-
                 {/* Force Balance Viz */}
                 <div className="pt-2">
                    <ForceBalance />
                 </div>
               </div>
 
-              {/* 2. Membrane Group */}
-              <div className="space-y-4 pt-6 border-t border-zinc-800/50">
-                  <span className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-600 font-mono">Membrane Properties</span>
+              {/* 2. Membrane Group - Compact Grid */}
+              <div className="space-y-4 pt-6 mt-6 border-t border-zinc-800/50">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                        <Settings2 className="w-3.5 h-3.5 text-zinc-600" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-600 font-mono">Membrane Properties</span>
+                    </div>
+                    <p className="text-[10px] text-zinc-500 leading-tight">
+                        Passive constants that determine how the cell integrates charge over time.
+                    </p>
+                  </div>
                   
-                  <div 
-                      className={cn("space-y-2 p-2 rounded border transition-colors duration-200", hoveredTerm === 'R' ? "bg-emerald-950/20 border-emerald-500/30" : "border-transparent hover:bg-zinc-900/50")}
-                      onMouseEnter={() => setHoveredTerm('R')} onMouseLeave={() => setHoveredTerm(null)}
-                  >
-                      <div className="flex justify-between text-[11px] font-mono text-zinc-400">
-                          <span>Resistance (R)</span>
-                          <span className="text-emerald-400">{params.R} MΩ</span>
-                      </div>
-                      <Slider min={1} max={100} step={1} value={[params.R]} onValueChange={(val) => setParams({ R: val[0] })} onPointerDown={onSliderChangeStart} className="[&_[role=slider]]:bg-emerald-500" />
-                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    {/* Resistance */}
+                    <div 
+                        className={cn("space-y-2 p-2 rounded border transition-colors duration-200", hoveredTerm === 'R' ? "bg-emerald-950/20 border-emerald-500/30" : "border-zinc-800/30 bg-zinc-900/30")}
+                        onMouseEnter={() => setHoveredTerm('R')} onMouseLeave={() => setHoveredTerm(null)}
+                    >
+                        <div className="flex justify-between text-[10px] font-mono text-zinc-400">
+                            <span>Resist (R)</span>
+                            <span className="text-emerald-400">{params.R}</span>
+                        </div>
+                        <Slider min={1} max={100} step={1} value={[params.R]} onValueChange={(val) => setParams({ R: val[0] })} onPointerDown={onSliderChangeStart} className="[&_[role=slider]]:bg-emerald-500" />
+                    </div>
 
-                  <div 
-                      className={cn("space-y-2 p-2 rounded border transition-colors duration-200", hoveredTerm === 'E_L' ? "bg-cyan-950/20 border-cyan-500/30" : "border-transparent hover:bg-zinc-900/50")}
-                      onMouseEnter={() => setHoveredTerm('E_L')} onMouseLeave={() => setHoveredTerm(null)}
-                  >
-                      <div className="flex justify-between text-[11px] font-mono text-zinc-400">
-                          <span>Leak Potential (E_L)</span>
-                          <span className="text-cyan-400">{params.E_L} mV</span>
-                      </div>
-                      <Slider min={-100} max={-40} step={1} value={[params.E_L]} onValueChange={(val) => setParams({ E_L: val[0] })} onPointerDown={onSliderChangeStart} className="[&_[role=slider]]:bg-cyan-500" />
-                  </div>
+                    {/* Leak */}
+                    <div 
+                        className={cn("space-y-2 p-2 rounded border transition-colors duration-200", hoveredTerm === 'E_L' ? "bg-cyan-950/20 border-cyan-500/30" : "border-zinc-800/30 bg-zinc-900/30")}
+                        onMouseEnter={() => setHoveredTerm('E_L')} onMouseLeave={() => setHoveredTerm(null)}
+                    >
+                        <div className="flex justify-between text-[10px] font-mono text-zinc-400">
+                            <span>Leak (E_L)</span>
+                            <span className="text-cyan-400">{params.E_L}</span>
+                        </div>
+                        <Slider min={-100} max={-40} step={1} value={[params.E_L]} onValueChange={(val) => setParams({ E_L: val[0] })} onPointerDown={onSliderChangeStart} className="[&_[role=slider]]:bg-cyan-500" />
+                    </div>
 
-                  <div className="space-y-2 p-2 rounded border border-transparent hover:bg-zinc-900/50">
-                      <div className="flex justify-between text-[11px] font-mono text-zinc-400">
-                          <span>Capacitance (C)</span>
-                          <span>{params.C} μF</span>
-                      </div>
-                      <Slider min={0.1} max={5} step={0.1} value={[params.C]} onValueChange={(val) => setParams({ C: val[0] })} onPointerDown={onSliderChangeStart} />
+                    {/* Capacitance - Spans full width for balance */}
+                    <div className="col-span-2 space-y-2 p-2 rounded border border-zinc-800/30 bg-zinc-900/30">
+                        <div className="flex justify-between text-[10px] font-mono text-zinc-400">
+                            <span>Capacitance (C)</span>
+                            <span>{params.C} μF</span>
+                        </div>
+                        <Slider min={0.1} max={5} step={0.1} value={[params.C]} onValueChange={(val) => setParams({ C: val[0] })} onPointerDown={onSliderChangeStart} />
+                    </div>
                   </div>
               </div>
 
-              {/* 3. Stimulus Group */}
+              {/* 3. Stimulus Group - Fixed Layout */}
               <div 
-                  className={cn("space-y-4 pt-6 border-t border-zinc-800/50 transition-colors duration-300", hoveredTerm === 'I' ? "bg-amber-950/10 -mx-2 px-2 py-4 rounded-xl" : "")}
+                  className={cn(
+                      "mt-6 pt-6 border-t border-zinc-800/50 space-y-4 transition-colors duration-300 rounded-xl", 
+                      hoveredTerm === 'I' ? "bg-amber-950/5 border-amber-500/20 -mx-2 px-2 pb-2" : ""
+                  )}
                   onMouseEnter={() => setHoveredTerm('I')} onMouseLeave={() => setHoveredTerm(null)}
               >
-                  <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                          <Zap className="w-3.5 h-3.5 text-amber-500" />
-                          <span className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-600 font-mono">Input Drive</span>
-                      </div>
-                      <Select value={params.inputMode} onValueChange={(val: InputMode) => setParams({ inputMode: val })}>
-                          <SelectTrigger className="w-24 bg-zinc-950 border-zinc-800 h-6 text-[10px] focus:ring-0 outline-none">
-                              <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent className="bg-zinc-900 border-zinc-800">
-                              <SelectItem value="constant">Constant</SelectItem>
-                              <SelectItem value="pulse">Pulse</SelectItem>
-                              <SelectItem value="noise">Noise</SelectItem>
-                              <SelectItem value="sine">Sine</SelectItem>
-                          </SelectContent>
-                      </Select>
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <Zap className="w-3.5 h-3.5 text-amber-500" />
+                            <span className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-600 font-mono">Input Drive</span>
+                        </div>
+                        <Select value={params.inputMode} onValueChange={(val: InputMode) => setParams({ inputMode: val })}>
+                            <SelectTrigger className="w-24 bg-zinc-950 border-zinc-800 h-6 text-[10px] focus:ring-0 outline-none">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="bg-zinc-900 border-zinc-800">
+                                <SelectItem value="constant">Constant</SelectItem>
+                                <SelectItem value="pulse">Pulse</SelectItem>
+                                <SelectItem value="noise">Noise</SelectItem>
+                                <SelectItem value="sine">Sine</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <p className="text-[10px] text-zinc-500 leading-tight italic">
+                        {getModeDescription()}
+                    </p>
                   </div>
 
-                  {/* Mode Specific Sliders */}
-                  <div className="space-y-3 px-1">
+                  {/* Mode Specific Sliders - Grid Layout where possible */}
+                  <div className="space-y-3">
                       {params.inputMode === 'constant' && (
-                           <div className="space-y-2">
-                              <div className="flex justify-between text-[11px] font-mono text-zinc-400">
+                           <div className="space-y-2 p-2 rounded border border-amber-500/10 bg-amber-500/5">
+                              <div className="flex justify-between text-[10px] font-mono text-zinc-400">
                                   <span>Current (I)</span>
-                                  <span className="text-amber-500">{params.I} nA</span>
+                                  <span className="text-amber-500 font-bold">{params.I} nA</span>
                               </div>
                               <Slider min={0} max={20} step={0.1} value={[params.I]} onValueChange={(val) => setParams({ I: val[0] })} onPointerDown={onSliderChangeStart} className="[&_[role=slider]]:bg-amber-500" />
                            </div>
                       )}
+                      
                       {params.inputMode === 'pulse' && (
-                          <>
-                              <div className="space-y-2">
-                                  <div className="flex justify-between text-[11px] font-mono text-zinc-400"><span>Amplitude</span><span className="text-amber-500">{params.pulseConfig.amplitude} nA</span></div>
+                          <div className="grid grid-cols-2 gap-2">
+                              <div className="col-span-2 space-y-2">
+                                  <div className="flex justify-between text-[10px] font-mono text-zinc-400"><span>Amplitude</span><span className="text-amber-500">{params.pulseConfig.amplitude} nA</span></div>
                                   <Slider min={0} max={50} step={1} value={[params.pulseConfig.amplitude]} onValueChange={(val) => updateConfig('pulse', { amplitude: val[0] })} onPointerDown={onSliderChangeStart} className="[&_[role=slider]]:bg-amber-500" />
                               </div>
                               <div className="space-y-2">
-                                  <div className="flex justify-between text-[11px] font-mono text-zinc-400"><span>Interval</span><span>{params.pulseConfig.interval} ms</span></div>
+                                  <div className="flex justify-between text-[10px] font-mono text-zinc-400"><span>Interval</span><span>{params.pulseConfig.interval}ms</span></div>
                                   <Slider min={10} max={200} step={5} value={[params.pulseConfig.interval]} onValueChange={(val) => updateConfig('pulse', { interval: val[0] })} onPointerDown={onSliderChangeStart} />
                               </div>
                               <div className="space-y-2">
-                                  <div className="flex justify-between text-[11px] font-mono text-zinc-400"><span>Width</span><span>{params.pulseConfig.width} ms</span></div>
+                                  <div className="flex justify-between text-[10px] font-mono text-zinc-400"><span>Width</span><span>{params.pulseConfig.width}ms</span></div>
                                   <Slider min={1} max={20} step={1} value={[params.pulseConfig.width]} onValueChange={(val) => updateConfig('pulse', { width: val[0] })} onPointerDown={onSliderChangeStart} />
                               </div>
-                          </>
+                          </div>
                       )}
+
                       {params.inputMode === 'noise' && (
-                          <>
+                          <div className="grid grid-cols-2 gap-2">
                               <div className="space-y-2">
-                                  <div className="flex justify-between text-[11px] font-mono text-zinc-400"><span>Mean</span><span className="text-amber-500">{params.noiseConfig.mean} nA</span></div>
+                                  <div className="flex justify-between text-[10px] font-mono text-zinc-400"><span>Mean</span><span className="text-amber-500">{params.noiseConfig.mean} nA</span></div>
                                   <Slider min={0} max={20} step={0.5} value={[params.noiseConfig.mean]} onValueChange={(val) => updateConfig('noise', { mean: val[0] })} onPointerDown={onSliderChangeStart} className="[&_[role=slider]]:bg-amber-500" />
                               </div>
                               <div className="space-y-2">
-                                  <div className="flex justify-between text-[11px] font-mono text-zinc-400"><span>Sigma (σ)</span><span>{params.noiseConfig.sigma}</span></div>
+                                  <div className="flex justify-between text-[10px] font-mono text-zinc-400"><span>Sigma</span><span>{params.noiseConfig.sigma}</span></div>
                                   <Slider min={0} max={10} step={0.1} value={[params.noiseConfig.sigma]} onValueChange={(val) => updateConfig('noise', { sigma: val[0] })} onPointerDown={onSliderChangeStart} />
                               </div>
-                          </>
+                          </div>
                       )}
+
                       {params.inputMode === 'sine' && (
-                          <>
+                          <div className="grid grid-cols-2 gap-2">
                               <div className="space-y-2">
-                                  <div className="flex justify-between text-[11px] font-mono text-zinc-400"><span>Amplitude</span><span className="text-amber-500">{params.sineConfig.amplitude} nA</span></div>
+                                  <div className="flex justify-between text-[10px] font-mono text-zinc-400"><span>Amp</span><span className="text-amber-500">{params.sineConfig.amplitude} nA</span></div>
                                   <Slider min={0} max={30} step={1} value={[params.sineConfig.amplitude]} onValueChange={(val) => updateConfig('sine', { amplitude: val[0] })} onPointerDown={onSliderChangeStart} className="[&_[role=slider]]:bg-amber-500" />
                               </div>
                               <div className="space-y-2">
-                                  <div className="flex justify-between text-[11px] font-mono text-zinc-400"><span>Frequency</span><span>{params.sineConfig.frequency} Hz</span></div>
+                                  <div className="flex justify-between text-[10px] font-mono text-zinc-400"><span>Freq</span><span>{params.sineConfig.frequency} Hz</span></div>
                                   <Slider min={1} max={50} step={1} value={[params.sineConfig.frequency]} onValueChange={(val) => updateConfig('sine', { frequency: val[0] })} onPointerDown={onSliderChangeStart} />
                               </div>
-                          </>
+                          </div>
                       )}
                   </div>
               </div>
 
               {/* 4. Status Footer */}
-              <div className="pt-6 border-t border-zinc-800/50">
+              <div className="mt-auto pt-6 border-t border-zinc-800/50">
                   <div className="flex items-center gap-2 mb-2 text-zinc-600">
                       <Info className="w-3.5 h-3.5" />
                       <span className="text-[10px] font-black uppercase tracking-[0.15em] font-mono">Workstation Status</span>
@@ -307,9 +326,12 @@ export default function LifLab() {
                       "p-3 rounded-lg border bg-zinc-950/50 transition-all duration-100", 
                       isSpiking ? "border-emerald-500/50 bg-emerald-950/20 shadow-[0_0_15px_rgba(16,185,129,0.2)]" : "border-zinc-800/50"
                   )}>
-                      <p className={cn("text-[11px] font-medium leading-tight", isSpiking ? "text-emerald-400" : "text-zinc-400")}>
+                      <p className={cn("text-[11px] font-medium leading-tight", isSpiking ? "text-emerald-400 font-bold" : "text-zinc-400")}>
                           {isSpiking 
-                            ? ">>> ACTION POTENTIAL GENERATED <<< " 
+                            ? ">>> ACTION POTENTIAL GENERATED <<< 
+
+[Image of an action potential waveform]
+" 
                             : isRunning 
                                 ? "Simulation running. Integrating membrane potential..."
                                 : "Simulation paused. System in standby."}
