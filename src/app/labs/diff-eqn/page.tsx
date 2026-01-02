@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from 'next/link';
 import { Slider } from "@/components/ui/slider";
-import { FunctionSquare, Compass, Timer, Anchor, Zap, Settings2, Activity } from "lucide-react";
+import { FunctionSquare, Compass, Timer, Anchor, Zap, Activity } from "lucide-react";
 import {
     Select,
     SelectContent,
@@ -313,8 +313,7 @@ export default function PhasePlanePage() {
                                 {/* Parameter Section */}
                                 <div className="space-y-4 pt-6 border-t border-zinc-800/50">
                                     <div className="space-y-1">
-                                        <div className="flex items-center gap-2">
-                                            <Settings2 className="w-3.5 h-3.5 text-zinc-600" />
+                                        <div>
                                             <span className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-600 font-mono">System Parameters</span>
                                         </div>
                                         <p className="text-[10px] text-zinc-500 leading-tight">
