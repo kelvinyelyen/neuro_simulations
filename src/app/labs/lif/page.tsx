@@ -64,7 +64,6 @@ export default function LifLab() {
         params,
         history,
         ghostTrace,
-        captureGhostTrace,
         isRunning,
         setIsRunning,
         resetSimulation,
