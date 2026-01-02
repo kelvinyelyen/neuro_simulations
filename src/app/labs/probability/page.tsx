@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from 'next/link';
 import { Slider } from "@/components/ui/slider";
-import { Activity } from "lucide-react";
+import { Activity, FunctionSquare } from "lucide-react";
 import {
     Select,
     SelectContent,
@@ -37,6 +37,7 @@ export default function ProbabilityPage() {
             case 'coin': return {
                 header: "Bernoulli Process",
                 param: "Probability (p)",
+                formula: `P(k) = p^k (1-p)^{1-k}`,
                 color: "text-emerald-400",
                 accent: "bg-emerald-500",
                 desc: "Simulating independent binary events (Ion Channels).",
@@ -48,6 +49,7 @@ export default function ProbabilityPage() {
             case 'poisson': return {
                 header: "Poisson Process",
                 param: "Firing Rate (λ)",
+                formula: `P(k) = \\frac{\\lambda^k e^{-\\lambda}}{k!}`,
                 color: "text-purple-400",
                 accent: "bg-purple-500",
                 desc: "Simulating random spike arrival times.",
@@ -80,7 +82,7 @@ export default function ProbabilityPage() {
             lastFrameTime = now;
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#09090b"; // zinc-950
+            ctx.fillStyle = "#09090b"; 
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             if (mode === 'coin') {
@@ -254,7 +256,7 @@ export default function ProbabilityPage() {
 
                 <div className="flex items-center gap-4">
                     <Select value={mode} onValueChange={(v) => setMode(v as Mode)}>
-                        <SelectTrigger className="w-[180px] h-9 bg-zinc-900 border-zinc-800 text-sm text-zinc-200">
+                        <SelectTrigger className="w-[180px] h-9 bg-zinc-900 border-zinc-800 text-sm text-zinc-200 focus:ring-0">
                             <SelectValue placeholder="Mode" />
                         </SelectTrigger>
                         <SelectContent className="bg-zinc-900 border-zinc-800">
@@ -270,18 +272,20 @@ export default function ProbabilityPage() {
                 </div>
             </header>
 
-            {/* Main Application Area */}
+            {/* Main Content Area */}
             <main className="flex-1 flex overflow-hidden p-8 gap-8">
                 
-                {/* 1. Left Control Panel (The small box in your sketch) */}
-                <aside className="w-80 flex flex-col gap-6">
-                    <div className="bg-zinc-900/50 border border-zinc-800 p-6 rounded-2xl shadow-sm space-y-6">
+                {/* Left Panel: Controls */}
+                <aside className="w-80 flex flex-col gap-6 shrink-0">
+                    <div className="bg-zinc-900/50 border border-zinc-800 p-6 rounded-2xl space-y-8 flex flex-col">
+                        
+                        {/* Parameter Control */}
                         <div className="space-y-4">
                             <div className="flex justify-between items-center">
-                                <label className="text-xs font-bold uppercase tracking-wider text-zinc-500">
+                                <label className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-500">
                                     {labels.param}
                                 </label>
-                                <span className={cn("text-sm font-bold px-2 py-0.5 rounded bg-zinc-950 border border-zinc-800", labels.color)}>
+                                <span className={cn("text-base font-bold tabular-nums", labels.color)}>
                                     {rate.toFixed(2)}
                                 </span>
                             </div>
@@ -298,37 +302,63 @@ export default function ProbabilityPage() {
                                 )}
                             />
                             
-                            <p className="text-xs text-zinc-500 leading-relaxed italic">
+                            <p className="text-xs text-zinc-500 leading-relaxed italic pr-4">
                                 {labels.desc}
                             </p>
                         </div>
 
-                        <div className="pt-6 border-t border-zinc-800/50">
-                            <div className="space-y-2">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-600">Live Data</span>
-                                <div className="text-sm font-medium text-white tabular-nums">
-                                    {labels.live()}
-                                </div>
+                        {/* Formula Display */}
+                        <div className="pt-6 border-t border-zinc-800/50 space-y-3">
+                            <div className="flex items-center gap-2">
+                                <FunctionSquare className="w-3.5 h-3.5 text-zinc-600" />
+                                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-600">Model Formula</span>
+                            </div>
+                            <div className="bg-black/30 rounded-xl p-4 flex items-center justify-center border border-zinc-800/30">
+                                <span className="text-sm font-light text-zinc-300">
+                                    $${labels.formula}$$
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Telemetry */}
+                        <div className="pt-6 border-t border-zinc-800/50 space-y-3">
+                            <span className="text-[10px] font-black uppercase tracking-[0.15em] text-zinc-600">Live Statistics</span>
+                            <div className="text-sm font-medium text-white tabular-nums bg-zinc-950 p-3 rounded-xl border border-zinc-800 text-center">
+                                {labels.live()}
                             </div>
                         </div>
                     </div>
                 </aside>
 
-                {/* 2. Right Visualization Panel (The large box in your sketch) */}
-                <section className="flex-1 min-w-0 bg-zinc-900/30 border border-zinc-800 rounded-2xl overflow-hidden flex items-center justify-center relative shadow-inner">
-                    <div className="w-full max-w-4xl p-4">
-                        <canvas
-                            ref={canvasRef}
-                            width={800}
-                            height={400}
-                            className="w-full h-auto bg-zinc-950 rounded-lg shadow-2xl border border-zinc-800"
-                        />
+                {/* Right Panel: Visualization */}
+                <section className="flex-1 min-w-0 bg-zinc-900/30 border border-zinc-800 rounded-3xl overflow-hidden flex flex-col relative shadow-inner">
+                    <div className="flex-1 flex items-center justify-center p-6">
+                        <div className="w-full max-w-4xl relative group">
+                             {/* Canvas Glow effect */}
+                             <div className={cn(
+                                "absolute -inset-1 rounded-xl blur-lg opacity-10 transition duration-1000",
+                                mode === 'coin' ? "bg-emerald-500" : "bg-purple-500"
+                            )} />
+                            <canvas
+                                ref={canvasRef}
+                                width={800}
+                                height={400}
+                                className="relative w-full h-auto bg-zinc-950 rounded-xl shadow-2xl border border-zinc-800"
+                            />
+                        </div>
                     </div>
                     
-                    {/* Status indicator in the corner of the large box */}
-                    <div className="absolute bottom-6 right-6 flex items-center gap-2 px-3 py-1.5 rounded-full bg-zinc-950/50 border border-zinc-800 backdrop-blur-md">
-                        <div className={cn("w-1.5 h-1.5 rounded-full animate-pulse", mode === 'coin' ? "bg-emerald-500" : "bg-purple-500")} />
-                        <span className="text-[10px] font-bold uppercase tracking-tighter text-zinc-500">Engine_Running</span>
+                    {/* Status Footnote */}
+                    <div className="p-4 px-8 border-t border-zinc-800/50 flex justify-between items-center bg-zinc-900/40">
+                        <div className="flex items-center gap-2">
+                            <div className={cn("w-1.5 h-1.5 rounded-full", mode === 'coin' ? "bg-emerald-500" : "bg-purple-500")} />
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-600">
+                                {mode === 'coin' ? "Bernoulli Engine" : "Poisson Engine"}
+                            </span>
+                        </div>
+                        <span className="text-[10px] text-zinc-700 uppercase tracking-widest">
+                            Simulation Hz: 60
+                        </span>
                     </div>
                 </section>
             </main>
