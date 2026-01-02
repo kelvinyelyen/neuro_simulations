@@ -311,14 +311,6 @@ export default function PhasePlanePage() {
                             {labels.yAxis} axis
                         </div>
                     </div>
-                    
-                    <div className="p-4 px-10 border-t border-zinc-800/50 flex justify-between items-center bg-zinc-950/50">
-                        <div className="flex items-center gap-3">
-                            <div className={cn("w-2 h-2 rounded-full animate-pulse", mode === 'spike' ? "bg-emerald-500" : "bg-blue-500")} />
-                            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 font-mono">Engine: Phase_Plane_RK4</span>
-                        </div>
-                        <span className="text-[10px] text-zinc-700 uppercase tracking-widest font-mono">Precision: High_Res_DPR</span>
-                    </div>
                 </section>
             </main>
         </div>
