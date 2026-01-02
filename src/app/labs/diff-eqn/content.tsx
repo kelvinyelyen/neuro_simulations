@@ -16,7 +16,7 @@ export const getPhaseContent = (mode: Mode) => {
                         content: (
                             <div className="space-y-2 text-sm text-zinc-300">
                                 <p>
-                                    The simplest model of a neuron is just a leaky capacitor.
+                                    The simplest model of a neuron is just a leaky capacitor. 
                                 </p>
                                 <ul className="list-disc list-inside ml-2 space-y-1">
                                     <li>
@@ -34,9 +34,9 @@ export const getPhaseContent = (mode: Mode) => {
                         color: "blue",
                         content: (
                             <div className="text-sm text-zinc-300">
-                                <BlockMath>{"\\dot{V} = -V + I_{ext}"}</BlockMath>
+                                <BlockMath>{"\\dot{V} = -(V - I)"}</BlockMath>
                                 <p>
-                                    Without input (<InlineMath>I=0</InlineMath>), the system decays exponentially to zero. This is the &quot;forgetting&quot; mechanism of the brain.
+                                    Without input, the system decays exponentially to zero. The "velocity" of change depends entirely on how far you are from the target.
                                 </p>
                             </div>
                         )
@@ -44,39 +44,64 @@ export const getPhaseContent = (mode: Mode) => {
                 ]
             };
 
-        case 'resonator':
+        case 'time-constant':
             return {
-                title: "The Resonator",
-                subtitle: "Subthreshold Oscillations",
+                title: "Time Constant (τ)",
+                subtitle: "The Speed of Dynamics",
                 sections: [
                     {
-                        title: "Two Forces",
-                        color: "cyan",
+                        title: "Resistance to Change",
+                        color: "blue",
                         content: (
                             <div className="space-y-2 text-sm text-zinc-300">
                                 <p>
-                                    Some neurons don&apos;t just decay; they bounce. This happens when you have two competing currents.
+                                    Not all neurons react at the same speed. The Time Constant (<InlineMath>\tau</InlineMath>) dictates how "sluggish" the system is.
                                 </p>
-                                <ul className="list-disc list-inside ml-2 space-y-1">
-                                    <li>
-                                        <strong className="text-blue-400">Restoring Force:</strong> Pushes voltage back to rest.
-                                    </li>
-                                    <li>
-                                        <strong className="text-amber-400">Slow Negative Feedback:</strong> A delayed current (like <InlineMath>I_h</InlineMath>) that overshoots.
-                                    </li>
-                                </ul>
+                                <BlockMath>{"\\tau \\dot{V} = -(V - I)"}</BlockMath>
                             </div>
                         )
                     },
                     {
-                        title: " damped Oscillations",
-                        color: "amber",
+                        title: "Memory",
+                        color: "indigo",
                         content: (
                             <div className="text-sm text-zinc-300">
-                                <BlockMath>{"\\dot{V} = w"}</BlockMath>
-                                <BlockMath>{"\\dot{w} = -V - \\delta w"}</BlockMath>
                                 <p>
-                                    This creates a &quot;preferred frequency&quot; at which the neuron likes to vibrate (Resonance).
+                                    <strong className="text-blue-400">High <InlineMath>\tau</InlineMath>:</strong> The neuron integrates information over a long time (Integration).
+                                </p>
+                                <p className="mt-2">
+                                    <strong className="text-rose-400">Low <InlineMath>\tau</InlineMath>:</strong> The neuron reacts instantly to coincidences (Coincidence Detection).
+                                </p>
+                            </div>
+                        )
+                    }
+                ]
+            };
+
+        case 'fixed-points':
+            return {
+                title: "Fixed Points",
+                subtitle: "Equilibrium & Stability",
+                sections: [
+                    {
+                        title: "Zero Velocity",
+                        color: "fuchsia",
+                        content: (
+                            <div className="space-y-2 text-sm text-zinc-300">
+                                <p>
+                                    A fixed point is a state where the neuron stops changing. In the Phase Plane, this is where the flow vectors have zero length.
+                                </p>
+                                <BlockMath>{"\\dot{V} = 0"}</BlockMath>
+                            </div>
+                        )
+                    },
+                    {
+                        title: "Attractors",
+                        color: "lime",
+                        content: (
+                            <div className="space-y-2 text-sm text-zinc-300">
+                                <p>
+                                    Most biological fixed points are <strong>Stable Nodes</strong> (Attractors). They pull all nearby trajectories into them, acting like a magnet for the voltage.
                                 </p>
                             </div>
                         )
@@ -94,14 +119,13 @@ export const getPhaseContent = (mode: Mode) => {
                         color: "emerald",
                         content: (
                             <div className="space-y-2 text-sm text-zinc-300">
-                                <p>The defining feature of a neuron: <strong>The Action Potential</strong>.</p>
-                                <p>It requires positive feedback to explode away from rest.</p>
+                                <p>The defining feature of a neuron: <strong>The Action Potential</strong>. </p>
                                 <ul className="list-disc list-inside ml-2 space-y-1">
                                     <li>
-                                        <strong className="text-emerald-400">Fast Na+ (<InlineMath>V</InlineMath>):</strong> Explodes open when voltage rises.
+                                        <strong className="text-emerald-400">Fast Na+ (<InlineMath>V</InlineMath>):</strong> Explodes open when voltage rises (Positive Feedback).
                                     </li>
                                     <li>
-                                        <strong className="text-amber-400">Slow K+ (<InlineMath>w</InlineMath>):</strong> Slowly opens to shut the system down (refractory period).
+                                        <strong className="text-amber-400">Slow K+ (<InlineMath>w</InlineMath>):</strong> Slowly opens to shut the system down (Recovery).
                                     </li>
                                 </ul>
                             </div>
@@ -113,49 +137,11 @@ export const getPhaseContent = (mode: Mode) => {
                         content: (
                             <div className="text-sm text-zinc-300">
                                 <p>
-                                    If input <InlineMath>I</InlineMath> is high enough, the Fixed Point becomes unstable.
+                                    If input <InlineMath>I</InlineMath> is high enough, the stable Fixed Point disappears.
                                 </p>
                                 <p className="mt-2">
-                                    The system enters a <strong>Limit Cycle</strong>—repetitive firing. This is how neurons encode strong signals.
+                                    The system gets trapped in a loop called a <strong>Limit Cycle</strong>—repetitive firing. This is how neurons encode continuous intensity.
                                 </p>
-                            </div>
-                        )
-                    }
-                ]
-            };
-
-        default: // 'math'
-            return {
-                title: "The Phase Plane",
-                subtitle: "A Map of All Possibilities",
-                sections: [
-                    {
-                        title: "Geometric Thinking",
-                        color: "blue",
-                        content: (
-                            <div className="text-sm text-zinc-300">
-                                <p>
-                                    Instead of simulating time (<InlineMath>t</InlineMath>), we look at Geometry.
-                                </p>
-                                <p className="mt-2">
-                                    Every point on this screen is a possible state of the neuron. The arrows tell you where that state will move next.
-                                </p>
-                            </div>
-                        )
-                    },
-                    {
-                        title: "Nullclines",
-                        color: "orange",
-                        content: (
-                            <div className="space-y-2 text-sm text-zinc-300">
-                                <div className="p-2 border border-emerald-500/30 rounded bg-emerald-500/10">
-                                    <strong className="text-emerald-400">Green Line (<InlineMath>{"\\dot{V}=0"}</InlineMath>)</strong>
-                                    <p>Where Voltage stops changing. (The Balance of Currents)</p>
-                                </div>
-                                <div className="p-2 border border-amber-500/30 rounded bg-amber-500/10">
-                                    <strong className="text-amber-400">Orange Line (<InlineMath>{"\\dot{w}=0"}</InlineMath>)</strong>
-                                    <p>Where Recovery stops changing. (The Steady State)</p>
-                                </div>
                             </div>
                         )
                     }
