@@ -1,6 +1,33 @@
 import Link from "next/link";
 import { ArrowRight, Activity, Zap, Grid, Waves } from "lucide-react";
 
+const curriculum = [
+  {
+    slug: "/labs/linear-algebra",
+    title: "Signal Integration",
+    subtitle: "Linear Algebra & The Geometry of Inputs",
+    icon: Grid,
+  },
+  {
+    slug: "/labs/diff-eqn",
+    title: "Membrane Dynamics",
+    subtitle: "Differential Equations & Stability Analysis",
+    icon: Zap,
+  },
+  {
+    slug: "/labs/probability",
+    title: "Neural Stochasticity",
+    subtitle: "Probability, Noise & Information Coding",
+    icon: Waves,
+  },
+  {
+    slug: "/labs/lif",
+    title: "LIF Synthesis",
+    subtitle: "Simulating the First Artificial Neuron",
+    icon: Activity,
+  },
+];
+
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-950 p-24 text-zinc-100 font-mono">
@@ -16,82 +43,36 @@ export default function Home() {
         </h1>
       </div>
 
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-3 lg:text-left gap-6">
-        {/* 1. Linear Algebra */}
-        <Link
-          href="/labs/linear-algebra"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-emerald-500/30 hover:bg-zinc-900/50 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-        >
-          <h2 className="mb-3 text-xl font-bold flex items-center gap-2 text-white">
-            Signal Integration
-            <Grid className="h-4 w-4 text-emerald-400" />
-          </h2>
+      {/* Directory-style curriculum list */}
+      <div className="mb-32 w-full max-w-3xl text-left">
+        <ul className="space-y-4">
+          {curriculum.map((item) => {
+            const Icon = item.icon;
 
-          <p className="m-0 max-w-[30ch] text-sm text-zinc-400">
-            Linear Algebra & The Geometry of Inputs.
-          </p>
+            return (
+              <li key={item.slug}>
+                <Link
+                  href={item.slug}
+                  className="flex items-center justify-between border-b border-zinc-800 py-3 hover:border-emerald-500/40 transition-colors group"
+                >
+                  <div className="flex items-start gap-3">
+                    <Icon className="h-4 w-4 mt-1 text-emerald-400" />
+                    <div>
+                      <p className="text-sm font-semibold text-zinc-100">
+                        {item.title}
+                      </p>
+                      <p className="text-xs text-zinc-500">
+                        {item.subtitle}
+                      </p>
+                    </div>
+                  </div>
 
-          <div className="mt-4 flex items-center text-emerald-400 opacity-0 transition-opacity group-hover:opacity-100 text-xs">
-            Enter Lab <ArrowRight className="ml-2 h-3 w-3" />
-          </div>
-        </Link>
-
-        {/* 2. Phase Plane */}
-        <Link
-          href="/labs/diff-eqn"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-emerald-500/30 hover:bg-zinc-900/50 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-        >
-          <h2 className="mb-3 text-xl font-bold flex items-center gap-2 text-white">
-            Membrane Dynamics
-            <Zap className="h-4 w-4 text-emerald-400" />
-          </h2>
-
-          <p className="m-0 max-w-[30ch] text-sm text-zinc-400">
-            Differential Equations & Stability Analysis
-          </p>
-
-          <div className="mt-4 flex items-center text-emerald-400 opacity-0 transition-opacity group-hover:opacity-100 text-xs">
-            Enter Lab <ArrowRight className="ml-2 h-3 w-3" />
-          </div>
-        </Link>
-
-        {/* 3. Probability */}
-        <Link
-          href="/labs/probability"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-emerald-500/30 hover:bg-zinc-900/50 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-        >
-          <h2 className="mb-3 text-xl font-bold flex items-center gap-2 text-white">
-            Neural Stochasticity
-            <Waves className="h-4 w-4 text-emerald-400" />
-          </h2>
-
-          <p className="m-0 max-w-[30ch] text-sm text-zinc-400">
-            Probability, Noise & Information Coding
-          </p>
-
-          <div className="mt-4 flex items-center text-emerald-400 opacity-0 transition-opacity group-hover:opacity-100 text-xs">
-            Enter Lab <ArrowRight className="ml-2 h-3 w-3" />
-          </div>
-        </Link>
-
-        {/* 4. LIF Model */}
-        <Link
-          href="/labs/lif"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-emerald-500/30 hover:bg-zinc-900/50 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-        >
-          <h2 className="mb-3 text-xl font-bold flex items-center gap-2 text-white">
-            LIF Synthesis
-            <Activity className="h-4 w-4 text-emerald-400" />
-          </h2>
-
-          <p className="m-0 max-w-[30ch] text-sm text-zinc-400">
-            Simulating the First Artificial Neuron
-          </p>
-
-          <div className="mt-4 flex items-center text-emerald-400 opacity-0 transition-opacity group-hover:opacity-100 text-xs">
-            Enter Lab <ArrowRight className="ml-2 h-3 w-3" />
-          </div>
-        </Link>
+                  <ArrowRight className="h-3 w-3 text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
       </div>
     </div>
   );
