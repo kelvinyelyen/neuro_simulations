@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { FunctionSquare, LayoutGrid, MousePointerClick } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import { cn } from "@/lib/utils";
@@ -108,7 +108,7 @@ export const VisualProcessingLab = () => {
                                             ? "bg-zinc-800 text-white border-zinc-700"
                                             : "bg-zinc-900 border-zinc-800 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100"
                                     )}
-                                    onClick={() => applyPreset(preset as any)}
+                                    onClick={() => applyPreset(preset as 'on-center' | 'off-center' | 'vertical' | 'horizontal')}
                                 >
                                     {preset.replace('-', ' ')} {preset.includes('edge') ? '' : (preset === 'vertical' || preset === 'horizontal' ? 'Edge' : '')}
                                 </Button>

@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from "react";
 import { FunctionSquare } from "lucide-react";
-import { Button } from '@/components/ui/button';
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 import { BlockMath, InlineMath } from 'react-katex';
@@ -13,7 +12,7 @@ export const VectorMathLab = () => {
 
     // Animate Inputs (Buckets filling/unfilling)
     React.useEffect(() => {
-        let startTime = Date.now();
+        const startTime = Date.now();
         let animationFrameId: number;
 
         const animate = () => {

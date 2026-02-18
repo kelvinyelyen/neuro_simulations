@@ -29,7 +29,7 @@ export const getLinearContent = (mode: Mode) => {
                     content: (
                         <div className="space-y-2 text-sm text-zinc-300">
                             <p>
-                                The <strong>dot product</strong> measures how much two vectors points in the "same direction".
+                                The <strong>dot product</strong> measures how much two vectors points in the &quot;same direction&quot;.
                             </p>
                             <BlockMath>{"\\vec{a} \\cdot \\vec{b} = \\sum a_i b_i"}</BlockMath>
                             <p className="text-xs text-zinc-500 italic">
@@ -52,7 +52,7 @@ export const getLinearContent = (mode: Mode) => {
                 content: (
                     <div className="space-y-2 text-sm text-zinc-300">
                         <p>
-                            Neurons in the visual system (like the LGN) don't just "see" light. They look for specific <strong>patterns</strong> in space.
+                            Neurons in the visual system (like the LGN) don&apos;t just &quot;see&quot; light. They look for specific <strong>patterns</strong> in space.
                         </p>
                         <p>
                             This preference is defined by their <strong>synaptic weights</strong> (<InlineMath math="\vec{w}" />).
@@ -88,11 +88,11 @@ export const getLinearContent = (mode: Mode) => {
                 content: (
                     <div className="space-y-2 text-sm text-zinc-300">
                         <p>
-                            We model the neuron's response as a <strong>Dot Product</strong> between the input image (<InlineMath math="\vec{r}" />) and the weight matrix (<InlineMath math="\vec{w}" />).
+                            We model the neuron&apos;s response as a <strong>Dot Product</strong> between the input image (<InlineMath math="\vec{r}" />) and the weight matrix (<InlineMath math="\vec{w}" />).
                         </p>
                         <BlockMath>{"LGN_{response} = \\vec{w} \\cdot \\vec{r} = \\sum w_i r_i"}</BlockMath>
                         <p className="text-xs text-zinc-500 italic">
-                            If the input image matches the weight pattern (e.g., center light, surround dark), the dot product is maximized. If they are opposites, it's minimized.
+                            If the input image matches the weight pattern (e.g., center light, surround dark), the dot product is maximized. If they are opposites, it&apos;s minimized.
                         </p>
                     </div>
                 )
