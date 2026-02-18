@@ -50,7 +50,7 @@ export function ConceptDialog({
                     className="text-zinc-500 hover:text-emerald-400 hover:bg-zinc-900/50 transition-colors duration-200"
                 >
                     <BookOpen className="h-4 w-4 mr-2" />
-                    <span className="text-xs font-mono tracking-wide">Concept Map</span>
+                    <span className="text-xs tracking-wide">Concept Map</span>
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-2xl bg-zinc-950 border-zinc-800 text-zinc-200 max-h-[85vh] flex flex-col p-0 overflow-hidden">
